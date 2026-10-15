@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'InvoiceGuard - Invoice Tracker SaaS',
-  description: 'Secure invoicing and payment tracking built with Next.js and Supabase',
+  title: 'InvoiceGuard - Secure SaaS Dashboard',
+  description: 'Professional invoice and payment tracking application',
 }
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-slate-950 text-slate-100 antialiased min-h-screen">
+      <body className="bg-[#F3EFE6] text-[#16140F] antialiased min-h-screen">
         {children}
       </body>
     </html>
