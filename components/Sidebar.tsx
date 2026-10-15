@@ -89,22 +89,31 @@ export default function Sidebar() {
       {/* Top Brand Section */}
       <div className="space-y-6 p-6">
         
-        {/* App Logo & Title with Live Status Badge */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#F3EFE6]/10">
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#2A23FF] to-indigo-500 text-[#F3EFE6] font-mono font-bold text-sm flex items-center justify-center shadow-md">
-              IG
-            </div>
-            <div>
-              <h1 className="font-[800] text-[#F3EFE6] text-sm tracking-tight">InvoiceGuard</h1>
-              <span className="font-mono text-[9.5px] uppercase tracking-[0.08em] text-[#FF4D2E] font-medium">
-                Enterprise OS
-              </span>
-            </div>
+        {/* Precision Eyebrow & Brand Logo styled like the dashboard headers */}
+        <div className="pb-5 border-b border-[#F3EFE6]/10 space-y-2.5">
+          <div className="flex items-center space-x-2">
+            <div className="w-[24px] h-[1.5px] bg-[#2A23FF]" />
+            <span className="font-mono text-[10px] tracking-[0.08em] uppercase text-[#2A23FF] font-medium">
+              00 · System
+            </span>
           </div>
-          <span className="font-mono text-[9px] bg-[#1FAE5A]/20 text-[#1FAE5A] px-2 py-0.5 rounded-full border border-[#1FAE5A]/35 uppercase tracking-wider font-semibold">
-            Live
-          </span>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-9 h-9 rounded-xl bg-[#2A23FF] text-[#F3EFE6] font-mono font-bold text-sm flex items-center justify-center shadow-md">
+                IG
+              </div>
+              <div>
+                {/* Signature Italic-Serif turn applied to brand title */}
+                <h1 className="font-[800] text-[#F3EFE6] text-base tracking-tight">
+                  Invoice<span className="font-serif italic font-normal text-[#2A23FF]">Guard</span>
+                </h1>
+              </div>
+            </div>
+            <span className="font-mono text-[9px] bg-[#1FAE5A]/20 text-[#1FAE5A] px-2 py-0.5 rounded-full border border-[#1FAE5A]/35 uppercase tracking-wider font-semibold">
+              Live
+            </span>
+          </div>
         </div>
 
         {/* Group 1: INSIGHTS */}
@@ -175,7 +184,7 @@ export default function Sidebar() {
 
       {/* Bottom Security RLS Widget */}
       <div className="p-4 m-6 mt-2 rounded-xl bg-[#F3EFE6]/5 border border-[#F3EFE6]/10 space-y-1.5">
-        <div className="files-center flex items-center justify-between">
+        <div className="flex items-center justify-between">
           <span className="font-mono text-[9.5px] uppercase tracking-wider text-[#F3EFE6]/40">Database RLS</span>
           <div className="w-2 h-2 rounded-full bg-[#1FAE5A] shadow-[0_0_6px_rgba(31,174,90,0.5)] animate-pulse" />
         </div>
