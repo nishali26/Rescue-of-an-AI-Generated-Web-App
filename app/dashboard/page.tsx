@@ -8,6 +8,9 @@ import AnalyticsView from '@/components/views/AnalyticsView'
 import InvoicesView from '@/components/views/InvoicesView'
 import ClientsView from '@/components/views/ClientsView'
 import TransactionsView from '@/components/views/TransactionsView'
+import SettingsView from '@/components/views/SettingsView'
+import SecurityView from '@/components/views/SecurityView'
+import OverviewView from '@/components/views/OverviewView'
 
 // Views import (Aap inhein alag files mein bhi rakh sakti hain ya yahan direct switch kar sakti hain)
 export default function DashboardPage() {
@@ -116,78 +119,7 @@ export default function DashboardPage() {
         {/* --- DYNAMIC VIEW RENDERING BASED ON ACTIVE TAB --- */}
 
         {/* 1. OVERVIEW VIEW */}
-        {activeTab === 'overview' && (
-          <div className="space-y-8 animate-fadeIn">
-            <div>
-              <div className="flex items-center space-x-2.5 mb-3">
-                <div className="w-[34px] h-[1.5px] bg-[#2A23FF]" />
-                <span className="font-mono text-[11px] tracking-[0.08em] uppercase text-[#2A23FF] font-medium">
-                  01 · Overview
-                </span>
-              </div>
-              <h1 className="text-[2.5rem] md:text-[3rem] font-[800] leading-[1.0] tracking-tight text-[#16140F]">
-                Your workflow, at a <span className="font-serif italic font-normal text-[#2A23FF]">glance</span>.
-              </h1>
-              <p className="text-[16px] text-[#4A463C] mt-2 leading-[1.55]">
-                Manage invoices and monitor secure client transactions in real time.
-              </p>
-            </div>
-
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-[#F3EFE6] border border-[#16140F]/15 p-6 rounded-[18px]">
-                <p className="font-mono text-[11px] uppercase text-[#4A463C] font-semibold mb-2">Total Invoices</p>
-                <span className="text-[3rem] font-[800] text-[#16140F]">{invoices.length}</span>
-              </div>
-              <div className="bg-[#F3EFE6] border border-[#16140F]/15 p-6 rounded-[18px]">
-                <p className="font-mono text-[11px] uppercase text-[#4A463C] font-semibold mb-2">System Status</p>
-                <div className="flex items-center space-x-2 mt-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#1FAE5A] animate-pulse" />
-                  <span className="text-xl font-[800] text-[#16140F]">Active & Secure</span>
-                </div>
-              </div>
-              <div className="bg-[#F3EFE6] border border-[#16140F]/15 p-6 rounded-[18px]">
-                <p className="font-mono text-[11px] uppercase text-[#4A463C] font-semibold mb-2">Security Rule</p>
-                <span className="font-mono text-xs bg-[#2A23FF]/10 text-[#2A23FF] px-2.5 py-1 rounded font-semibold uppercase">
-                  RLS Protected
-                </span>
-              </div>
-            </div>
-
-            {/* Invoices Table */}
-            <div className="bg-[#F3EFE6] border border-[#16140F]/15 rounded-[18px] p-6 md:p-8">
-              <h2 className="text-xl font-[800] text-[#16140F] mb-4">Live Invoice Records</h2>
-              {invoices.length > 0 ? (
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-[#E9E3D4]/50 font-mono uppercase text-[11px] text-[#4A463C]">
-                    <tr>
-                      <th className="px-4 py-3">Client Name</th>
-                      <th className="px-4 py-3">Amount</th>
-                      <th className="px-4 py-3">Due Date</th>
-                      <th className="px-4 py-3">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#16140F]/10">
-                    {invoices.map((inv: any) => (
-                      <tr key={inv.id} className="hover:bg-[#E9E3D4]/30">
-                        <td className="px-4 py-4 text-[#16140F]">{inv.client_name}</td>
-                        <td className="px-4 py-4 font-mono">${inv.amount}</td>
-                        <td className="px-4 py-4 font-mono text-xs">{inv.due_date}</td>
-                        <td className="px-4 py-4">
-                          <span className={`px-2.5 py-1 rounded-full font-mono text-[10.5px] uppercase ${inv.status === 'paid' ? 'bg-[#1FAE5A]/15 text-[#1FAE5A]' : 'bg-[#FF4D2E]/15 text-[#FF4D2E]'}`}>
-                            {inv.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <p className="text-sm text-[#4A463C] py-10 text-center">No invoices found.</p>
-              )}
-            </div>
-          </div>
-        )}
+        {activeTab === 'overview' && <OverviewView invoices={invoices} user={user} />}
 
         {/* 2. ANALYTICS VIEW */}
         {activeTab === 'analytics' && <AnalyticsView invoices={invoices} />}
@@ -202,24 +134,10 @@ export default function DashboardPage() {
         {activeTab === 'transactions' && <TransactionsView invoices={invoices} />}
 
         {/* 6. SECURITY LOGS VIEW */}
-        {activeTab === 'security' && (
-          <div className="space-y-8 animate-fadeIn">
-            <h1 className="text-[2.5rem] font-[800]">Database <span className="font-serif italic text-[#2A23FF]">Security</span>.</h1>
-            <div className="bg-[#F3EFE6] border border-[#16140F]/15 rounded-[18px] p-8">
-              <p className="text-sm text-[#4A463C]">Row Level Security (RLS) audit logs and access tokens.</p>
-            </div>
-          </div>
-        )}
+       {activeTab === 'security' && <SecurityView />}
 
         {/* 7. SETTINGS VIEW */}
-        {activeTab === 'settings' && (
-          <div className="space-y-8 animate-fadeIn">
-            <h1 className="text-[2.5rem] font-[800]">Workspace <span className="font-serif italic text-[#2A23FF]">Settings</span>.</h1>
-            <div className="bg-[#F3EFE6] border border-[#16140F]/15 rounded-[18px] p-8">
-              <p className="text-sm text-[#4A463C]">Configure account preferences and API credentials.</p>
-            </div>
-          </div>
-        )}
+        {activeTab === 'settings' && <SettingsView />}
 
       </main>
 
