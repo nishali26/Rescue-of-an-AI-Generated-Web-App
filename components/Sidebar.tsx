@@ -1,15 +1,17 @@
 'use client'
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import React from 'react'
 
-export default function Sidebar() {
-  const pathname = usePathname()
+interface SidebarProps {
+  activeTab: string
+  setActiveTab: (tab: any) => void
+}
 
+export default function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   const insightItems = [
     { 
+      id: 'overview',
       name: 'Dashboard', 
-      href: '/dashboard', 
       index: '01',
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -18,8 +20,8 @@ export default function Sidebar() {
       )
     },
     { 
+      id: 'analytics',
       name: 'Analytics', 
-      href: '/dashboard/analytics', 
       index: '02',
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,8 +33,8 @@ export default function Sidebar() {
 
   const managementItems = [
     { 
+      id: 'invoices',
       name: 'Invoices', 
-      href: '/dashboard/invoices', 
       index: '03',
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -41,8 +43,8 @@ export default function Sidebar() {
       )
     },
     { 
+      id: 'clients',
       name: 'Clients', 
-      href: '/dashboard/clients', 
       index: '04',
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -51,8 +53,8 @@ export default function Sidebar() {
       )
     },
     { 
+      id: 'transactions',
       name: 'Transactions', 
-      href: '/dashboard/transactions', 
       index: '05',
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,8 +63,8 @@ export default function Sidebar() {
       )
     },
     { 
+      id: 'security',
       name: 'Security Logs', 
-      href: '/dashboard/security', 
       index: '06',
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,8 +73,8 @@ export default function Sidebar() {
       )
     },
     { 
+      id: 'settings',
       name: 'Settings', 
-      href: '/dashboard/settings', 
       index: '07',
       icon: (
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,12 +125,13 @@ export default function Sidebar() {
           </p>
           
           {insightItems.map((item) => {
-            const isActive = pathname === item.href
+            const isActive = activeTab === item.id
             return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all group ${
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActiveTab(item.id)}
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all group cursor-pointer ${
                   isActive
                     ? 'bg-[#2A23FF] text-[#F3EFE6] shadow-lg shadow-[#2A23FF]/30 font-semibold'
                     : 'text-[#F3EFE6]/70 hover:bg-[#F3EFE6]/8 hover:text-[#F3EFE6]'
@@ -143,7 +146,7 @@ export default function Sidebar() {
                 <span className={`font-mono text-[10.5px] ${isActive ? 'text-[#F3EFE6]/90' : 'text-[#F3EFE6]/30 group-hover:text-[#F3EFE6]/60'}`}>
                   {item.index}
                 </span>
-              </Link>
+              </button>
             )
           })}
         </div>
@@ -155,12 +158,13 @@ export default function Sidebar() {
           </p>
           
           {managementItems.map((item) => {
-            const isActive = pathname === item.href
+            const isActive = activeTab === item.id
             return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all group ${
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActiveTab(item.id)}
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all group cursor-pointer ${
                   isActive
                     ? 'bg-[#2A23FF] text-[#F3EFE6] shadow-lg shadow-[#2A23FF]/30 font-semibold'
                     : 'text-[#F3EFE6]/70 hover:bg-[#F3EFE6]/8 hover:text-[#F3EFE6]'
@@ -175,7 +179,7 @@ export default function Sidebar() {
                 <span className={`font-mono text-[10.5px] ${isActive ? 'text-[#F3EFE6]/90' : 'text-[#F3EFE6]/30 group-hover:text-[#F3EFE6]/60'}`}>
                   {item.index}
                 </span>
-              </Link>
+              </button>
             )
           })}
         </div>
