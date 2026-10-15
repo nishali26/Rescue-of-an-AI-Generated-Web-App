@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'
 import Sidebar from '@/components/Sidebar'
 import AnalyticsView from '@/components/views/AnalyticsView'
 import InvoicesView from '@/components/views/InvoicesView'
+import ClientsView from '@/components/views/ClientsView'
+import TransactionsView from '@/components/views/TransactionsView'
 
 // Views import (Aap inhein alag files mein bhi rakh sakti hain ya yahan direct switch kar sakti hain)
 export default function DashboardPage() {
@@ -194,24 +196,10 @@ export default function DashboardPage() {
         {activeTab === 'invoices' && <InvoicesView invoices={invoices} />}
 
         {/* 4. CLIENTS VIEW */}
-        {activeTab === 'clients' && (
-          <div className="space-y-8 animate-fadeIn">
-            <h1 className="text-[2.5rem] font-[800]">Active <span className="font-serif italic text-[#2A23FF]">Clients</span>.</h1>
-            <div className="bg-[#F3EFE6] border border-[#16140F]/15 rounded-[18px] p-8">
-              <p className="text-sm text-[#4A463C]">Client directory and relationship records.</p>
-            </div>
-          </div>
-        )}
+        {activeTab === 'clients' && <ClientsView invoices={invoices} />}
 
         {/* 5. TRANSACTIONS VIEW */}
-        {activeTab === 'transactions' && (
-          <div className="space-y-8 animate-fadeIn">
-            <h1 className="text-[2.5rem] font-[800]">Secure <span className="font-serif italic text-[#2A23FF]">Transactions</span>.</h1>
-            <div className="bg-[#F3EFE6] border border-[#16140F]/15 rounded-[18px] p-8">
-              <p className="text-sm text-[#4A463C]">Detailed ledger of all financial movements.</p>
-            </div>
-          </div>
-        )}
+        {activeTab === 'transactions' && <TransactionsView invoices={invoices} />}
 
         {/* 6. SECURITY LOGS VIEW */}
         {activeTab === 'security' && (
