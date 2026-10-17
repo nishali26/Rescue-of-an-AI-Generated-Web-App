@@ -4,19 +4,20 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Sidebar from '@/components/Sidebar'
+import OverviewView from '@/components/views/OverviewView'
 import AnalyticsView from '@/components/views/AnalyticsView'
 import InvoicesView from '@/components/views/InvoicesView'
 import ClientsView from '@/components/views/ClientsView'
 import TransactionsView from '@/components/views/TransactionsView'
-import SettingsView from '@/components/views/SettingsView'
 import SecurityView from '@/components/views/SecurityView'
-import OverviewView from '@/components/views/OverviewView'
+import SettingsView from '@/components/views/SettingsView'
 
-// Views import (Aap inhein alag files mein bhi rakh sakti hain ya yahan direct switch kar sakti hain)
 export default function DashboardPage() {
   const [user, setUser] = useState<any>(null)
   const [invoices, setInvoices] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  
+  // Fixed: Added 'security' to activeTab type definition
   const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'invoices' | 'clients' | 'transactions' | 'security' | 'settings'>('overview')
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   
@@ -87,8 +88,9 @@ export default function DashboardPage() {
           <div className="flex items-center space-x-4">
             <div className="relative">
               <button
+                type="button"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center space-x-2.5 bg-[#E9E3D4]/50 hover:bg-[#E9E3D4] px-3 py-1.5 rounded-xl border border-[#16140F]/15 transition-all"
+                className="flex items-center space-x-2.5 bg-[#E9E3D4]/50 hover:bg-[#E9E3D4] px-3 py-1.5 rounded-xl border border-[#16140F]/15 transition-all cursor-pointer"
               >
                 <div className="w-7 h-7 rounded-lg bg-[#2A23FF]/10 text-[#2A23FF] font-mono font-bold text-xs flex items-center justify-center">
                   {user?.email ? user.email.charAt(0).toUpperCase() : 'U'}
@@ -105,7 +107,7 @@ export default function DashboardPage() {
                     <p className="text-xs font-semibold text-[#16140F] truncate">{user?.email}</p>
                   </div>
                   <div className="py-1">
-                    <button onClick={handleSignOut} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#FF4D2E] hover:bg-[#FF4D2E]/10 flex items-center justify-between">
+                    <button type="button" onClick={handleSignOut} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#FF4D2E] hover:bg-[#FF4D2E]/10 flex items-center justify-between cursor-pointer">
                       <span>Sign Out</span>
                       <span>→</span>
                     </button>
@@ -118,25 +120,12 @@ export default function DashboardPage() {
 
         {/* --- DYNAMIC VIEW RENDERING BASED ON ACTIVE TAB --- */}
 
-        {/* 1. OVERVIEW VIEW */}
         {activeTab === 'overview' && <OverviewView invoices={invoices} user={user} />}
-
-        {/* 2. ANALYTICS VIEW */}
         {activeTab === 'analytics' && <AnalyticsView invoices={invoices} />}
-
-        {/* 3. INVOICES VIEW */}
         {activeTab === 'invoices' && <InvoicesView invoices={invoices} />}
-
-        {/* 4. CLIENTS VIEW */}
         {activeTab === 'clients' && <ClientsView invoices={invoices} />}
-
-        {/* 5. TRANSACTIONS VIEW */}
         {activeTab === 'transactions' && <TransactionsView invoices={invoices} />}
-
-        {/* 6. SECURITY LOGS VIEW */}
-       {activeTab === 'security' && <SecurityView />}
-
-        {/* 7. SETTINGS VIEW */}
+        {activeTab === 'security' && <SecurityView />}
         {activeTab === 'settings' && <SettingsView />}
 
       </main>
