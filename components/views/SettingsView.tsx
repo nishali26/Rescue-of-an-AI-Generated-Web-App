@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 export default function SettingsView() {
   const [companyName, setCompanyName] = useState('InvoiceGuard Enterprise OS')
@@ -15,17 +16,82 @@ export default function SettingsView() {
 
   const [saving, setSaving] = useState(false)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
-  const handleSaveSettings = (e: React.FormEvent) => {
+  const supabase = createClient()
+
+  // Load saved settings on mount from localStorage or Supabase
+  useEffect(() => {
+    async function loadSettings() {
+      // 1. Check localStorage first for instant client persistence
+      const savedLocal = localStorage.getItem('invoiceguard_settings')
+      if (savedLocal) {
+        try {
+          const parsed = JSON.parse(savedLocal)
+          setCompanyName(parsed.companyName || companyName)
+          setBillingEmail(parsed.billingEmail || billingEmail)
+          setCurrency(parsed.currency || currency)
+          setTaxId(parsed.taxId || taxId)
+          setRlsEnabled(parsed.rlsEnabled ?? true)
+          setMfaActive(parsed.mfaActive ?? true)
+          setAutoEncrypt(parsed.autoEncrypt ?? true)
+        } catch (e) {
+          console.error('Failed to parse local settings', e)
+        }
+      }
+
+      // 2. Fetch authenticated user profile data
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user?.email) {
+        setBillingEmail((prev) => (prev === 'admin@invoiceguard.io' ? user.email : prev))
+      }
+    }
+
+    loadSettings()
+  }, [supabase])
+
+  // Save Settings handler (Persists to localStorage & Supabase)
+  const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
     setToastMessage(null)
+    setErrorMsg(null)
 
-    setTimeout(() => {
+    const settingsPayload = {
+      companyName,
+      billingEmail,
+      currency,
+      taxId,
+      rlsEnabled,
+      mfaActive,
+      autoEncrypt,
+      updatedAt: new Date().toISOString()
+    }
+
+    try {
+      // 1. Save to browser localStorage (Guaranteed client persistence)
+      localStorage.setItem('invoiceguard_settings', JSON.stringify(settingsPayload))
+
+      // 2. Attempt to sync with Supabase auth metadata or user table if available
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        await supabase.auth.updateUser({
+          data: {
+            company_name: companyName,
+            billing_email: billingEmail,
+            currency,
+            tax_id: taxId
+          }
+        })
+      }
+
       setSaving(false)
-      setToastMessage('Workspace preferences & RLS protocols updated successfully.')
+      setToastMessage('Workspace preferences & security protocols successfully saved and committed.')
       setTimeout(() => setToastMessage(null), 4000)
-    }, 800)
+    } catch (err: any) {
+      setSaving(false)
+      setErrorMsg(err?.message || 'Failed to persist settings.')
+    }
   }
 
   return (
@@ -53,6 +119,12 @@ export default function SettingsView() {
         </div>
       )}
 
+      {errorMsg && (
+        <div className="p-4 rounded-xl bg-[#FF4D2E]/10 border border-[#FF4D2E]/30 text-xs font-mono text-[#FF4D2E]">
+          Error: {errorMsg}
+        </div>
+      )}
+
       {/* Settings Form Container */}
       <form onSubmit={handleSaveSettings} className="space-y-8">
         
@@ -70,6 +142,7 @@ export default function SettingsView() {
               </label>
               <input
                 type="text"
+                required
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
                 className="w-full bg-[#E9E3D4]/60 border border-[#16140F]/15 rounded-xl px-4 py-2.5 text-sm text-[#16140F] focus:outline-none focus:border-[#2A23FF]"
@@ -82,6 +155,7 @@ export default function SettingsView() {
               </label>
               <input
                 type="email"
+                required
                 value={billingEmail}
                 onChange={(e) => setBillingEmail(e.target.value)}
                 className="w-full bg-[#E9E3D4]/60 border border-[#16140F]/15 rounded-xl px-4 py-2.5 text-sm text-[#16140F] focus:outline-none focus:border-[#2A23FF]"
@@ -110,6 +184,7 @@ export default function SettingsView() {
               </label>
               <input
                 type="text"
+                required
                 value={taxId}
                 onChange={(e) => setTaxId(e.target.value)}
                 className="w-full bg-[#E9E3D4]/60 border border-[#16140F]/15 rounded-xl px-4 py-2.5 text-sm font-mono text-[#16140F] focus:outline-none focus:border-[#2A23FF]"
