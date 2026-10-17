@@ -43,7 +43,7 @@ export default function SettingsView() {
       // 2. Fetch authenticated user profile data
       const { data: { user } } = await supabase.auth.getUser()
       if (user?.email) {
-        setBillingEmail((prev) => (prev === 'admin@invoiceguard.io' ? user.email : prev))
+        setBillingEmail((prev) => (prev === 'admin@invoiceguard.io' ? (user.email as string) : prev))
       }
     }
 
