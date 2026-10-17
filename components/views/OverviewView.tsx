@@ -11,6 +11,7 @@ interface OverviewViewProps {
 export default function OverviewView({ invoices: initialInvoices, user }: OverviewViewProps) {
   const [invoices, setInvoices] = useState<any[]>(initialInvoices || [])
   const [loading, setLoading] = useState(!initialInvoices)
+  const [previewMode, setPreviewMode] = useState(false)
 
   // Creative Invoice Form State
   const [customerName, setCustomerName] = useState('')
@@ -22,7 +23,7 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
   const supabase = createClient()
 
   useEffect(() => {
-    if (initialInvoices && initialInvoices.length > 0) {
+    if (initialInvoices) {
       setInvoices(initialInvoices)
       setLoading(false)
       return
@@ -37,28 +38,31 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
       .select('*')
       .order('created_at', { ascending: false })
 
-    if (data && data.length > 0) {
+    if (data) {
       setInvoices(data)
-    } else {
-      // Fallback sample data if DB is empty so dashboard looks gorgeous instantly
-      setInvoices([
-        { id: '1', client_name: 'Tech & Software Corp', client_email: 'billing@techsoftware.io', amount: 13622, status: 'paid', due_date: '2026-10-01', created_at: '2026-09-15' },
-        { id: '2', client_name: 'Fashion & Apparel Studio', client_email: 'accounts@fashionstudio.co', amount: 9545, status: 'pending', due_date: '2026-10-20', created_at: '2026-09-25' },
-        { id: '3', client_name: 'Food & Beverage Group', client_email: 'treasury@fnbgroup.org', amount: 7064, status: 'paid', due_date: '2026-08-15', created_at: '2026-08-01' },
-      ])
     }
     setLoading(false)
   }
 
-  // Calculations derived from live or fallback invoices
-  const totalBalance = invoices
+  // Sample data for preview mode when user clicks the toggle
+  const sampleInvoices = [
+    { id: '1', client_name: 'Tech & Software Corp', client_email: 'billing@techsoftware.io', amount: 13622, status: 'paid', due_date: '2026-10-01', created_at: '2026-09-15' },
+    { id: '2', client_name: 'Fashion & Apparel Studio', client_email: 'accounts@fashionstudio.co', amount: 9545, status: 'pending', due_date: '2026-10-20', created_at: '2026-09-25' },
+    { id: '3', client_name: 'Food & Beverage Group', client_email: 'treasury@fnbgroup.org', amount: 7064, status: 'paid', due_date: '2026-08-15', created_at: '2026-08-01' },
+  ]
+
+  // Use sample data only if previewMode is active and real invoices are empty
+  const activeData = previewMode ? sampleInvoices : invoices
+
+  // Calculations based on active data
+  const totalBalance = activeData
     .filter((i) => i.status === 'paid')
-    .reduce((acc, curr) => acc + Number(curr.amount || 0), 0) || 34856.00
+    .reduce((acc, curr) => acc + Number(curr.amount || 0), 0)
 
-  const totalIncome = invoices
-    .reduce((acc, curr) => acc + Number(curr.amount || 0), 0) || 15634.00
+  const totalIncome = activeData
+    .reduce((acc, curr) => acc + Number(curr.amount || 0), 0)
 
-  const totalExpenses = 12643.00
+  const totalExpenses = previewMode ? 12643.00 : 0.00
 
   // Handle Creative Invoice Submission
   const handleCreateCreativeInvoice = async (e: React.FormEvent) => {
@@ -91,7 +95,7 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
       setInvoiceAmount('')
       setTimeout(() => setSuccessMsg(null), 5000)
     } else {
-      // Local fallback addition if Supabase RLS blocks unauthenticated insert
+      // Local fallback addition if DB insert requires session
       const localNewInv = {
         id: `local-${Date.now()}`,
         client_name: customerName,
@@ -125,7 +129,7 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
   return (
     <div className="space-y-8 animate-fadeIn antialiased selection:bg-[#2A23FF] selection:text-[#F3EFE6]">
       
-      {/* Top Greeting & Search Header */}
+      {/* Top Greeting & Actions Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-3 border-b border-[#16140F]/10">
         <div>
           <div className="flex items-center space-x-2.5 mb-1">
@@ -139,17 +143,26 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
           </h1>
         </div>
 
-        {/* Search & Notification Bar */}
-        <div className="flex items-center space-x-3">
+        {/* Sample Data Toggle & Search Bar */}
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setPreviewMode(!previewMode)}
+            className={`px-3.5 py-2 rounded-xl font-mono text-xs uppercase tracking-wider border transition-all cursor-pointer ${
+              previewMode
+                ? 'bg-[#FF4D2E] text-[#F3EFE6] border-[#FF4D2E] font-semibold shadow-sm'
+                : 'bg-[#E9E3D4]/60 text-[#16140F] border-[#16140F]/15 hover:bg-[#E9E3D4]'
+            }`}
+          >
+            {previewMode ? '● Hide Sample Data' : 'Load Sample Data'}
+          </button>
+
           <div className="relative">
             <input
               type="text"
               placeholder="Search workflow…"
-              className="bg-[#E9E3D4]/60 border border-[#16140F]/15 rounded-xl px-4 py-2 text-xs font-mono text-[#16140F] placeholder-[#4A463C]/60 focus:outline-none focus:border-[#2A23FF] w-60"
+              className="bg-[#E9E3D4]/60 border border-[#16140F]/15 rounded-xl px-4 py-2 text-xs font-mono text-[#16140F] placeholder-[#4A463C]/60 focus:outline-none focus:border-[#2A23FF] w-52"
             />
-          </div>
-          <div className="w-10 h-10 rounded-xl bg-[#E9E3D4]/60 border border-[#16140F]/15 flex items-center justify-center text-[#16140F] cursor-pointer hover:bg-[#E9E3D4]">
-            🔔
           </div>
         </div>
       </div>
@@ -345,32 +358,38 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
             </div>
           </div>
 
-          {/* Dynamic Recent Invoices / Transaction History */}
+          {/* Recent Ledger Activity */}
           <div className="bg-[#F3EFE6] border border-[#16140F]/15 rounded-[22px] p-6 shadow-sm space-y-5">
             <div className="flex justify-between items-center border-b border-[#16140F]/10 pb-3">
               <h3 className="font-[800] text-sm text-[#16140F]">Recent ledger activity</h3>
               <span className="font-mono text-[11px] text-[#2A23FF] font-semibold cursor-pointer hover:underline">
-                View all ({invoices.length})
+                View all ({activeData.length})
               </span>
             </div>
 
             <div className="space-y-4">
-              {invoices.slice(0, 3).map((inv, i) => (
-                <div key={inv.id || i} className={`flex items-center justify-between ${i > 0 ? 'pt-3 border-t border-[#16140F]/10' : ''}`}>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#E9E3D4] flex items-center justify-center font-bold text-xs text-[#16140F]">
-                      {inv.client_name ? inv.client_name.charAt(0).toUpperCase() : '💼'}
+              {activeData.length > 0 ? (
+                activeData.slice(0, 3).map((inv, i) => (
+                  <div key={inv.id || i} className={`flex items-center justify-between ${i > 0 ? 'pt-3 border-t border-[#16140F]/10' : ''}`}>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 rounded-xl bg-[#E9E3D4] flex items-center justify-center font-bold text-xs text-[#16140F]">
+                        {inv.client_name ? inv.client_name.charAt(0).toUpperCase() : '💼'}
+                      </div>
+                      <div className="truncate max-w-[150px]">
+                        <p className="text-xs font-semibold text-[#16140F] truncate">{inv.client_name}</p>
+                        <p className="font-mono text-[10px] text-[#4A463C] uppercase">{inv.status}</p>
+                      </div>
                     </div>
-                    <div className="truncate max-w-[150px]">
-                      <p className="text-xs font-semibold text-[#16140F] truncate">{inv.client_name}</p>
-                      <p className="font-mono text-[10px] text-[#4A463C] uppercase">{inv.status}</p>
-                    </div>
+                    <span className="font-mono text-xs font-bold text-[#16140F]">
+                      +${Number(inv.amount || 0).toLocaleString()}
+                    </span>
                   </div>
-                  <span className="font-mono text-xs font-bold text-[#16140F]">
-                    +${Number(inv.amount || 0).toLocaleString()}
-                  </span>
+                ))
+              ) : (
+                <div className="text-center py-8 font-mono text-xs text-[#4A463C]">
+                  No records found. Click &ldquo;Load Sample Data&rdquo; above.
                 </div>
-              ))}
+              )}
             </div>
           </div>
 
