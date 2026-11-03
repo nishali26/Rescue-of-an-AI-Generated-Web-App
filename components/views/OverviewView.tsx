@@ -9,6 +9,63 @@ interface OverviewViewProps {
 }
 
 export default function OverviewView({ invoices: initialInvoices, user }: OverviewViewProps) {
+
+  // ==========================================
+  // FLAW 02 INTRODUCED: Hardcoded Secret Keys
+  // ==========================================
+  const HARDCODED_STRIPE_KEY = "EXPOSED_STRIPE_SECRET_KEY_FOR_AUDIT_DEMO_12345";
+  const SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.hardcoded_admin_bypass_token_999";
+  // ==========================================
+
+
+  // ==========================================
+  // FLAW 03 INTRODUCED: BOLA / Insecure IDOR Lookup
+  // ==========================================
+  async function getInvoiceByIdVulnerable(invoiceId: string) {
+    console.log("Searching for ID:", invoiceId.trim());
+    
+    const { data, error } = await supabase
+      .from('invoices')
+      .select('*')
+      .eq('id', invoiceId.trim())
+
+    console.log("Query Response - Data:", data, "Error:", error);
+
+    if (error) {
+      console.error("Error fetching vulnerable invoice:", error)
+      return null
+    }
+    return data?.[0] || null
+  }
+  // ==========================================
+
+
+
+  // ==========================================
+  // FLAW 04 INTRODUCED: Missing API Timeout & Error Handling
+  // ==========================================
+  const [syncingApi, setSyncingApi] = useState(false)
+
+  const handleExternalApiSyncVulnerable = async () => {
+    setSyncingApi(true)
+
+    // VULNERABILITY: Ek aisi external API ko call kar rahe hain jo down hai ya exist nahi karti.
+    // Yahan na toh koi 'try/catch' block hai aur na hi 'AbortController' (timeout).
+    // Is wajah se agar API slow ya dead ho, toh poora component hang ho jata hai!
+    const response = await fetch('https://api.nonexistent-billing-gateway-99.com/v1/sync-invoices', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ projectId: 'InvoiceGuard', timestamp: Date.now() })
+    })
+
+    const data = await response.json()
+    console.log("API Sync Result:", data)
+    setSyncingApi(false)
+  }
+  // ==========================================
+
+
+
   const [invoices, setInvoices] = useState<any[]>(initialInvoices || [])
   const [loading, setLoading] = useState(!initialInvoices)
 
@@ -20,16 +77,29 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
+  // Test function for Flaw 03 (BOLA)
+  const [testInvoiceId, setTestInvoiceId] = useState('')
+  const [testResult, setTestResult] = useState<any>(null)
+
+  const handleTestBOLA = async () => {
+    if (!testInvoiceId) return
+    const result = await getInvoiceByIdVulnerable(testInvoiceId)
+    setTestResult(result)
+    console.log("BOLA Test Result (Any User Invoice):", result)
+  }
+
   const supabase = createClient()
 
+  // ==========================================
+  // FLAW 08 INTRODUCED: Unoptimized Repeated Query
+  // ==========================================
   useEffect(() => {
-    if (initialInvoices) {
-      setInvoices(initialInvoices)
-      setLoading(false)
-      return
-    }
+    // VULNERABILITY: Yahan dependency array `[]` missing hai! 
+    // Iska matlab hai ke component jab bhi re-render hoga, 
+    // yeh heavy database query bar-baar dobara fire hoti rahegi.
     fetchOverviewData()
-  }, [initialInvoices])
+  }) // <-- Missing dependency array brackets [] creates repeated/infinite fetching loop!
+  // ==========================================
 
   async function fetchOverviewData() {
     setLoading(true)
@@ -84,9 +154,17 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
     const { data, error } = await supabase.from('invoices').insert([payload]).select()
 
     if (error) {
-      setErrorMsg(error.message)
-      setSubmitting(false)
-      return
+     // ==========================================
+    // FLAW 05 INTRODUCED: Swallowing Error
+    // ==========================================
+    // Hum error ko sirf console mein print kar rahe hain, 
+    // lekin user ko screen par koi error message (setErrorMsg) nahi dikha rahe!
+    console.error("Database insert failed silently:", error.message)
+    
+    // setErrorMsg(error.message) <-- Yeh line humne hata di taake user ko pata na chale!
+    setSubmitting(false)
+    return
+    // ========================================== 
     }
 
     if (data && data.length > 0) {
@@ -265,7 +343,12 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
               <div className="pt-2">
                 <button
                   type="submit"
-                  disabled={submitting}
+
+                /* ==========================================
+                  FLAW 06 INTRODUCED: Missing Submit Lock     
+                  ========================================== */
+
+                 // disabled={submitting}
                   className="w-full bg-[#16140F] hover:bg-[#2A23FF] text-[#F3EFE6] font-mono text-xs uppercase tracking-wider font-semibold py-3.5 rounded-xl shadow-md transition-all cursor-pointer disabled:opacity-50"
                 >
                   {submitting ? 'Storing in Database…' : 'Commit Invoice to Database →'}
@@ -309,6 +392,49 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
               <span>12/20-124</span>
             </div>
           </div>
+
+          {/* ================= FLAW 03 TEST UI ================= */}
+  <div className="mt-8 p-4 bg-red-50 border border-red-200 rounded-lg">
+    <h3 className="text-sm font-mono font-bold text-red-800 mb-2">🚨 Flaw 03 Test (BOLA / IDOR Bypass)</h3>
+    <div className="flex gap-2">
+      <input 
+        type="text" 
+        placeholder="Enter any Invoice ID (e.g., 1, 2, 5...)" 
+        value={testInvoiceId}
+        onChange={(e) => setTestInvoiceId(e.target.value)}
+        className="px-3 py-1 text-sm border rounded bg-white"
+      />
+      <button 
+        onClick={handleTestBOLA}
+        className="px-4 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 font-mono"
+      >
+        Fetch Without Owner Check
+      </button>
+    </div>
+    {testResult && (
+      <pre className="mt-2 p-2 bg-black text-green-400 text-xs rounded overflow-x-auto">
+        {JSON.stringify(testResult, null, 2)}
+      </pre>
+    )}
+  </div>
+  {/* =================================================== */}
+
+
+  {/* ================= FLAW 04 TEST UI ================= */}
+      <div className="mt-8 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+        <h3 className="text-sm font-mono font-bold text-amber-800 mb-2">⚠️ Flaw 04 Test (Missing API Timeout & Error Handling)</h3>
+        <p className="text-xs text-gray-600 mb-3">
+          Yeh button external payment/billing provider ko sync karta hai bina kisi error handling ya timeout ke.
+        </p>
+        <button 
+          onClick={handleExternalApiSyncVulnerable}
+          disabled={syncingApi}
+          className="px-4 py-2 bg-amber-600 text-white text-sm rounded hover:bg-amber-700 font-mono transition-colors"
+        >
+          {syncingApi ? 'Syncing with Dead Gateway (Hanging)...' : 'Sync External Billing API'}
+        </button>
+      </div>
+      {/* =================================================== */}
 
           {/* Live Supabase Invoices List */}
           <div className="bg-[#F3EFE6] border border-[#16140F]/15 rounded-[22px] p-6 shadow-sm space-y-5">

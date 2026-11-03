@@ -28,10 +28,13 @@ export default function DashboardPage() {
     async function loadData() {
       const { data: { user }, error } = await supabase.auth.getUser()
 
+     // FLAW NO:1 AUTHENTICATION CHECK REMOVED. THIS IS A PROTECTED PAGES FLAW
+      /*
       if (error || !user) {
         router.push('/login')
         return
       }
+      */
 
       setUser(user)
 
