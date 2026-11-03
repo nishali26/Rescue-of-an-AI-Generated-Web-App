@@ -28,13 +28,15 @@ export default function DashboardPage() {
     async function loadData() {
       const { data: { user }, error } = await supabase.auth.getUser()
 
-     // FLAW NO:1 AUTHENTICATION CHECK REMOVED. THIS IS A PROTECTED PAGES FLAW
-      /*
+      // ==========================================
+      // FIXED: Flaw 01 (Restored Authentication Check & Redirect)
+      // ==========================================
       if (error || !user) {
+        setLoading(false) // Loading state ko turant false karein taake UI stuck na ho
         router.push('/login')
         return
       }
-      */
+      // ==========================================
 
       setUser(user)
 
@@ -58,6 +60,8 @@ export default function DashboardPage() {
     router.push('/login')
   }
 
+  // Agar loading true hai, toh secure workspace loading screen dikhayein 
+  // aur dashboard ka baaki content render hi na hone dein!
   if (loading) {
     return (
       <div className="min-h-screen bg-[#F3EFE6] text-[#16140F] flex items-center justify-center font-mono text-sm">

@@ -2,13 +2,16 @@ import { createBrowserClient } from '@supabase/ssr'
 
 export function createClient() {
   // ==========================================
-  // FLAW 07 INTRODUCED: Missing Production Env Fallback
+  // FIXED: Flaw 07 (Strict Environment Variable Validation)
   // ==========================================
-  // VULNERABILITY: Agar production (jaise Vercel) par env variables missing hon,
-  // toh code invalid placeholder URLs use karega. Is se build to pass ho jayegi,
-  // lekin runtime par saari database requests chup-chaap fail ho jayengi!
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://broken-placeholder-url.supabase.co'
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'invalid_missing_anon_key_999'
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  // Agar production mein env variables missing hain, toh silent failure ki bajaye 
+  // foran explicit error throw ho ga taake configuration issue foran pata chal jaye.
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Missing Supabase environment variables (NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY).')
+  }
   // ==========================================
 
   return createBrowserClient(
