@@ -34,7 +34,7 @@
 
 ### 2. Live Executive Dashboard & PostgreSQL Integration
 <div align="center">
-  <img src="image_5f7bc7.png" alt="InvoiceGuard Dashboard" width="85%"/>
+  <img src="C:\Users\Nisha Ali\Desktop\Rescue-of-an-AI-Generated-Web-App\Screenshot 2026-11-19 014002.png" alt="InvoiceGuard Dashboard" width="85%"/>
   <p><em>Executive Dashboard displaying real-time database metrics, settled balances, and live ledger data.</em></p>
 </div>
 
