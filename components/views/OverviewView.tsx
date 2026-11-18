@@ -8,27 +8,28 @@ interface OverviewViewProps {
   user?: any
 }
 
-export default function OverviewView({ invoices: initialInvoices, user }: OverviewViewProps) {
-
-
- // ==========================================
+export default function OverviewView({
+  invoices: initialInvoices,
+  user,
+}: OverviewViewProps) {
+  // ==========================================
   // FIXED: Flaw 02 - Hardcoded Secret Keys Removed
   // Sensitive keys have been removed from client-side code.
   // Payment and administrative operations are now handled securely via server-side environment variables.
   // ==========================================
 
-
-
- // ==========================================
+  // ==========================================
   // FIXED: Flaw 03 - Secure Invoice Lookup with Ownership Check (BOLA/IDOR Prevention)
   // ==========================================
   async function getInvoiceByIdSecure(invoiceId: string) {
-    console.log("Searching for ID:", invoiceId.trim());
-    
+    console.log('Searching for ID:', invoiceId.trim())
+
     // Pehle current authenticated user ka session ya user ID hasil karein
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
     if (!user) {
-      console.error("Unauthorized access attempt: No active session.")
+      console.error('Unauthorized access attempt: No active session.')
       return null
     }
 
@@ -39,16 +40,15 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
       .eq('id', invoiceId.trim())
       .eq('user_id', user.id) // <-- Yeh ensure karta hai ke user sirf apni invoices dekh sake
 
-    console.log("Query Response - Data:", data, "Error:", error);
+    console.log('Query Response - Data:', data, 'Error:', error)
 
     if (error) {
-      console.error("Error fetching secure invoice:", error)
+      console.error('Error fetching secure invoice:', error)
       return null
     }
     return data?.[0] || null
   }
   // ==========================================
-
 
   // ==========================================
   // FIXED: Flaw 04 - Secure API Call with Timeout & Error Handling
@@ -63,12 +63,18 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
     const timeoutId = setTimeout(() => controller.abort(), 5000)
 
     try {
-      const response = await fetch('https://api.nonexistent-billing-gateway-99.com/v1/sync-invoices', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ projectId: 'InvoiceGuard', timestamp: Date.now() }),
-        signal: controller.signal // <-- Timeout signal attached
-      })
+      const response = await fetch(
+        'https://api.nonexistent-billing-gateway-99.com/v1/sync-invoices',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            projectId: 'InvoiceGuard',
+            timestamp: Date.now(),
+          }),
+          signal: controller.signal, // <-- Timeout signal attached
+        }
+      )
 
       clearTimeout(timeoutId)
 
@@ -77,12 +83,12 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
       }
 
       const data = await response.json()
-      console.log("API Sync Result:", data)
+      console.log('API Sync Result:', data)
     } catch (error: any) {
       if (error.name === 'AbortError') {
-        console.error("API Sync Error: Request timed out after 5 seconds.")
+        console.error('API Sync Error: Request timed out after 5 seconds.')
       } else {
-        console.error("API Sync Error:", error.message || error)
+        console.error('API Sync Error:', error.message || error)
       }
     } finally {
       // Finally block ensure karta hai ke loading state hamesha reset ho
@@ -90,8 +96,6 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
     }
   }
   // ==========================================
-
-
 
   const [invoices, setInvoices] = useState<any[]>(initialInvoices || [])
   const [loading, setLoading] = useState(!initialInvoices)
@@ -108,18 +112,17 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
   const [testInvoiceId, setTestInvoiceId] = useState('')
   const [testResult, setTestResult] = useState<any>(null)
 
- const handleTestBOLA = async () => {
+  const handleTestBOLA = async () => {
     if (!testInvoiceId) return
     // FIXED: Using the secure lookup function that includes user ownership/BOLA checks
     const result = await getInvoiceByIdSecure(testInvoiceId)
     setTestResult(result)
-    console.log("BOLA Test Result (Authorized Check):", result)
+    console.log('BOLA Test Result (Authorized Check):', result)
   }
 
   const supabase = createClient()
-  
 
-// ==========================================
+  // ==========================================
   // FIXED 8: Optimized Query & Initial State Check
   // ==========================================
   useEffect(() => {
@@ -133,8 +136,6 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
     fetchOverviewData()
   }, [initialInvoices]) // <-- Correct dependency array ensure karta hai ke infinite loop na bane!
   // ==========================================
-
-
 
   async function fetchOverviewData() {
     setLoading(true)
@@ -154,10 +155,12 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
     .filter((i) => i.status === 'paid')
     .reduce((acc, curr) => acc + Number(curr.amount || 0), 0)
 
-  const totalIncome = invoices
-    .reduce((acc, curr) => acc + Number(curr.amount || 0), 0)
+  const totalIncome = invoices.reduce(
+    (acc, curr) => acc + Number(curr.amount || 0),
+    0
+  )
 
-  const totalExpenses = 0.00 // Real expenses tracked via ledger if applicable
+  const totalExpenses = 0.0 // Real expenses tracked via ledger if applicable
 
   // Handle Creative Invoice Submission (Real Database Insert)
   const handleCreateCreativeInvoice = async (e: React.FormEvent) => {
@@ -168,7 +171,9 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
     setSuccessMsg(null)
     setErrorMsg(null)
 
-    const { data: { user: authUser } } = await supabase.auth.getUser()
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser()
 
     if (!authUser) {
       setErrorMsg('User not authenticated. Please log in again.')
@@ -182,30 +187,35 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
       client_email: customerEmail || 'client@enterprise.io',
       amount: parseFloat(invoiceAmount) || 0,
       status: 'pending',
-      due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      description: 'Quick Creative Invoice Retainer'
+      due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split('T')[0],
+      description: 'Quick Creative Invoice Retainer',
     }
 
-    const { data, error } = await supabase.from('invoices').insert([payload]).select()
+    const { data, error } = await supabase
+      .from('invoices')
+      .insert([payload])
+      .select()
 
     if (error) {
       // ==========================================
       // FIXED: Flaw 05 - Error Handled & Displayed to User
       // ==========================================
-      console.error("Database insert failed:", error.message)
-      
+      console.error('Database insert failed:', error.message)
+
       // User ko UI par error message dikhane ke liye state active kar di hai
-      setErrorMsg(error.message) 
+      setErrorMsg(error.message)
       setSubmitting(false)
       return
-      // ========================================== 
+      // ==========================================
     }
-
-    
 
     if (data && data.length > 0) {
       setInvoices([data[0], ...invoices])
-      setSuccessMsg(`Invoice successfully created and stored in Supabase for ${customerName}!`)
+      setSuccessMsg(
+        `Invoice successfully created and stored in Supabase for ${customerName}!`
+      )
       setCustomerName('')
       setCustomerEmail('')
       setInvoiceAmount('')
@@ -220,14 +230,15 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
   if (loading) {
     return (
       <div className="py-24 text-[#16140F] flex items-center justify-center font-mono text-sm">
-        <p className="animate-pulse">Loading live Supabase workspace overview…</p>
+        <p className="animate-pulse">
+          Loading live Supabase workspace overview…
+        </p>
       </div>
     )
   }
 
   return (
     <div className="space-y-8 animate-fadeIn antialiased selection:bg-[#2A23FF] selection:text-[#F3EFE6]">
-      
       {/* Top Greeting & Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-3 border-b border-[#16140F]/10">
         <div>
@@ -238,7 +249,10 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
             </span>
           </div>
           <h1 className="text-[2.2rem] font-[800] tracking-tight text-[#16140F] capitalize">
-            Hello, <span className="font-serif italic font-normal text-[#2A23FF]">{userDisplayName}</span>
+            Hello,{' '}
+            <span className="font-serif italic font-normal text-[#2A23FF]">
+              {userDisplayName}
+            </span>
           </h1>
         </div>
 
@@ -259,10 +273,8 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
 
       {/* Main Grid: Left Column (Metrics + Creative Invoice Form) & Right Column (Black Card + Transaction History) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
         {/* LEFT COLUMN (7 Cols) */}
         <div className="lg:col-span-7 space-y-8">
-          
           {/* 3 Metric Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <div className="bg-[#D9E2EC] border border-[#16140F]/15 p-5 rounded-[22px] shadow-sm space-y-4">
@@ -270,11 +282,18 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
                 💳
               </div>
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-wider text-[#4A463C] font-semibold">Settled Balance</p>
-                <p className="font-mono text-[10px] text-[#4A463C]">Real DB Records</p>
+                <p className="font-mono text-[11px] uppercase tracking-wider text-[#4A463C] font-semibold">
+                  Settled Balance
+                </p>
+                <p className="font-mono text-[10px] text-[#4A463C]">
+                  Real DB Records
+                </p>
               </div>
               <p className="text-2xl font-[800] text-[#16140F] font-mono">
-                ${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                $
+                {totalBalance.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                })}
               </p>
             </div>
 
@@ -283,11 +302,18 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
                 📈
               </div>
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-wider text-[#4A463C] font-semibold">Total Billed</p>
-                <p className="font-mono text-[10px] text-[#4A463C]">Real DB Records</p>
+                <p className="font-mono text-[11px] uppercase tracking-wider text-[#4A463C] font-semibold">
+                  Total Billed
+                </p>
+                <p className="font-mono text-[10px] text-[#4A463C]">
+                  Real DB Records
+                </p>
               </div>
               <p className="text-2xl font-[800] text-[#16140F] font-mono">
-                ${totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                $
+                {totalIncome.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                })}
               </p>
             </div>
 
@@ -296,8 +322,12 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
                 📉
               </div>
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-wider text-[#4A463C] font-semibold">Total Records</p>
-                <p className="font-mono text-[10px] text-[#4A463C]">Supabase Table</p>
+                <p className="font-mono text-[11px] uppercase tracking-wider text-[#4A463C] font-semibold">
+                  Total Records
+                </p>
+                <p className="font-mono text-[10px] text-[#4A463C]">
+                  Supabase Table
+                </p>
               </div>
               <p className="text-2xl font-[800] text-[#16140F] font-mono">
                 {invoices.length} Invoices
@@ -309,8 +339,12 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
           <div className="bg-[#F3EFE6] border border-[#16140F]/15 rounded-[22px] p-6 md:p-8 shadow-sm space-y-6">
             <div className="flex justify-between items-center">
               <div>
-                <h2 className="text-xl font-[800] text-[#16140F]">Creative invoice</h2>
-                <p className="text-xs text-[#4A463C]">Saves directly into Supabase PostgreSQL database.</p>
+                <h2 className="text-xl font-[800] text-[#16140F]">
+                  Creative invoice
+                </h2>
+                <p className="text-xs text-[#4A463C]">
+                  Saves directly into Supabase PostgreSQL database.
+                </p>
               </div>
               <div className="w-9 h-9 rounded-full bg-[#16140F] text-[#F3EFE6] flex items-center justify-center font-bold text-lg">
                 +
@@ -329,9 +363,14 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
               </div>
             )}
 
-            <form onSubmit={handleCreateCreativeInvoice} className="space-y-5 pt-2">
+            <form
+              onSubmit={handleCreateCreativeInvoice}
+              className="space-y-5 pt-2"
+            >
               <div className="space-y-2">
-                <label className="block font-mono text-[11px] uppercase text-[#4A463C] font-semibold">Customer name</label>
+                <label className="block font-mono text-[11px] uppercase text-[#4A463C] font-semibold">
+                  Customer name
+                </label>
                 <div className="flex items-center justify-between border-b border-[#16140F]/15 pb-2">
                   <input
                     type="text"
@@ -346,7 +385,9 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
               </div>
 
               <div className="space-y-2">
-                <label className="block font-mono text-[11px] uppercase text-[#4A463C] font-semibold">Customer email</label>
+                <label className="block font-mono text-[11px] uppercase text-[#4A463C] font-semibold">
+                  Customer email
+                </label>
                 <div className="flex items-center justify-between border-b border-[#16140F]/15 pb-2">
                   <input
                     type="email"
@@ -361,7 +402,9 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
               </div>
 
               <div className="space-y-2">
-                <label className="block font-mono text-[11px] uppercase text-[#4A463C] font-semibold">Invoice Amount ($)</label>
+                <label className="block font-mono text-[11px] uppercase text-[#4A463C] font-semibold">
+                  Invoice Amount ($)
+                </label>
                 <div className="flex items-center justify-between border-b border-[#16140F]/15 pb-2">
                   <input
                     type="number"
@@ -380,31 +423,32 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
                 <button
                   type="submit"
 
-
-                // ==========================================
+                  // ==========================================
                   // FIXED: Flaw 06 - Submit Lock Enabled (Prevents Double Submission)
                   // ==========================================
-                  // Button ke andar 'disabled={submitting}' active kar diya hai taake 
+                  // Button ke andar 'disabled={submitting}' active kar diya hai taake
                   // fast double-clicks ya race conditions ki wajah se duplicate database entries na banein.
 
-
-                 disabled={submitting}
+                  disabled={submitting}
                   className="w-full bg-[#16140F] hover:bg-[#2A23FF] text-[#F3EFE6] font-mono text-xs uppercase tracking-wider font-semibold py-3.5 rounded-xl shadow-md transition-all cursor-pointer disabled:opacity-50"
                 >
-                  {submitting ? 'Storing in Database…' : 'Commit Invoice to Database →'}
+                  {submitting
+                    ? 'Storing in Database…'
+                    : 'Commit Invoice to Database →'}
                 </button>
               </div>
             </form>
           </div>
-
         </div>
 
         {/* RIGHT COLUMN (5 Cols): Black Credit Card & Real Database Ledger */}
         <div className="lg:col-span-5 space-y-6">
-          
           <div className="flex justify-between items-center">
             <h3 className="font-[800] text-base text-[#16140F]">My cards</h3>
-            <button type="button" className="w-9 h-9 rounded-full bg-[#F3EFE6] border border-[#16140F]/15 flex items-center justify-center font-bold text-lg hover:bg-[#E9E3D4] cursor-pointer">
+            <button
+              type="button"
+              className="w-9 h-9 rounded-full bg-[#F3EFE6] border border-[#16140F]/15 flex items-center justify-center font-bold text-lg hover:bg-[#E9E3D4] cursor-pointer"
+            >
               +
             </button>
           </div>
@@ -413,7 +457,9 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
             <div className="absolute -right-10 -top-10 w-40 h-40 bg-[#2A23FF]/30 rounded-full blur-2xl pointer-events-none" />
 
             <div className="flex justify-between items-center">
-              <span className="font-mono text-xs font-bold tracking-widest text-[#F3EFE6] uppercase">{userDisplayName} Doe</span>
+              <span className="font-mono text-xs font-bold tracking-widest text-[#F3EFE6] uppercase">
+                {userDisplayName} Doe
+              </span>
               <div className="flex space-x-1">
                 <div className="w-4 h-4 rounded-full bg-red-500 opacity-80" />
                 <div className="w-4 h-4 rounded-full bg-yellow-500 opacity-80 -ml-2" />
@@ -421,9 +467,14 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
             </div>
 
             <div className="space-y-1">
-              <span className="font-mono text-[10px] uppercase text-[#F3EFE6]/50">Live Balance</span>
+              <span className="font-mono text-[10px] uppercase text-[#F3EFE6]/50">
+                Live Balance
+              </span>
               <p className="text-3xl font-[800] font-mono tracking-tight text-[#F3EFE6]">
-                ${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                $
+                {totalBalance.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                })}
               </p>
             </div>
 
@@ -433,13 +484,12 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
             </div>
           </div>
 
-        
-
-
           {/* Live Supabase Invoices List */}
           <div className="bg-[#F3EFE6] border border-[#16140F]/15 rounded-[22px] p-6 shadow-sm space-y-5">
             <div className="flex justify-between items-center border-b border-[#16140F]/10 pb-3">
-              <h3 className="font-[800] text-sm text-[#16140F]">Live database records</h3>
+              <h3 className="font-[800] text-sm text-[#16140F]">
+                Live database records
+              </h3>
               <span className="font-mono text-[11px] text-[#2A23FF] font-semibold">
                 Total: {invoices.length}
               </span>
@@ -448,14 +498,23 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
             <div className="space-y-4">
               {invoices.length > 0 ? (
                 invoices.slice(0, 4).map((inv, i) => (
-                  <div key={inv.id || i} className={`flex items-center justify-between ${i > 0 ? 'pt-3 border-t border-[#16140F]/10' : ''}`}>
+                  <div
+                    key={inv.id || i}
+                    className={`flex items-center justify-between ${i > 0 ? 'pt-3 border-t border-[#16140F]/10' : ''}`}
+                  >
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 rounded-xl bg-[#E9E3D4] flex items-center justify-center font-bold text-xs text-[#16140F]">
-                        {inv.client_name ? inv.client_name.charAt(0).toUpperCase() : '💼'}
+                        {inv.client_name
+                          ? inv.client_name.charAt(0).toUpperCase()
+                          : '💼'}
                       </div>
                       <div className="truncate max-w-[150px]">
-                        <p className="text-xs font-semibold text-[#16140F] truncate">{inv.client_name}</p>
-                        <p className="font-mono text-[10px] text-[#4A463C] uppercase">{inv.status}</p>
+                        <p className="text-xs font-semibold text-[#16140F] truncate">
+                          {inv.client_name}
+                        </p>
+                        <p className="font-mono text-[10px] text-[#4A463C] uppercase">
+                          {inv.status}
+                        </p>
                       </div>
                     </div>
                     <span className="font-mono text-xs font-bold text-[#16140F]">
@@ -465,16 +524,14 @@ export default function OverviewView({ invoices: initialInvoices, user }: Overvi
                 ))
               ) : (
                 <div className="text-center py-8 font-mono text-xs text-[#4A463C]">
-                  No records in database yet. Create an invoice using the form on the left!
+                  No records in database yet. Create an invoice using the form
+                  on the left!
                 </div>
               )}
             </div>
           </div>
-
         </div>
-
       </div>
-
     </div>
   )
 }

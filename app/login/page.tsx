@@ -10,7 +10,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  
+
   const router = useRouter()
   const supabase = createClient()
 
@@ -36,7 +36,6 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F3EFE6] px-4 text-[#16140F] antialiased selection:bg-[#2A23FF] selection:text-[#F3EFE6]">
       <div className="max-w-[420px] w-full bg-[#F3EFE6] border border-[#16140F]/15 p-8 md:p-10 rounded-[18px] shadow-[0_20px_40px_rgba(22,20,15,0.06)] relative">
-        
         {/* Top Eyebrow */}
         <div className="flex items-center space-x-2.5 mb-6">
           <div className="w-[34px] h-[1.5px] bg-[#2A23FF]" />
@@ -51,7 +50,11 @@ export default function LoginPage() {
             IG
           </div>
           <h1 className="text-[2.2rem] font-[800] leading-[1.0] tracking-tight text-[#16140F]">
-            Sign in, <span className="font-serif italic font-normal text-[#2A23FF]">securely</span>.
+            Sign in,{' '}
+            <span className="font-serif italic font-normal text-[#2A23FF]">
+              securely
+            </span>
+            .
           </h1>
           <p className="text-[15px] text-[#4A463C] mt-2.5 leading-[1.55]">
             Access your secure invoice tracker and real-time dashboard.
@@ -111,13 +114,15 @@ export default function LoginPage() {
           <div className="text-center pt-4 border-t border-[#16140F]/10 mt-6">
             <p className="text-[14px] text-[#4A463C]">
               Don&apos;t have an account?{' '}
-              <Link href="/register" className="font-semibold text-[#2A23FF] underline underline-offset-[3px] hover:decoration-2">
+              <Link
+                href="/register"
+                className="font-semibold text-[#2A23FF] underline underline-offset-[3px] hover:decoration-2"
+              >
                 Create account
               </Link>
             </p>
           </div>
         </form>
-
       </div>
     </div>
   )

@@ -3,7 +3,8 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'InvoiceGuard - Enterprise SaaS Dashboard',
-  description: 'Professional invoice and payment tracking built with Next.js and Supabase',
+  description:
+    'Professional invoice and payment tracking built with Next.js and Supabase',
 }
 
 export default function RootLayout({

@@ -7,7 +7,9 @@ interface ClientsViewProps {
   invoices?: any[]
 }
 
-export default function ClientsView({ invoices: initialInvoices }: ClientsViewProps) {
+export default function ClientsView({
+  invoices: initialInvoices,
+}: ClientsViewProps) {
   const [invoices, setInvoices] = useState<any[]>(initialInvoices || [])
   const [loading, setLoading] = useState(!initialInvoices)
   const [searchQuery, setSearchQuery] = useState('')
@@ -52,31 +54,72 @@ export default function ClientsView({ invoices: initialInvoices }: ClientsViewPr
 
   // Sample data for demo mode if DB is empty
   const sampleInvoices = [
-    { id: '1', client_name: 'Tech & Software Corp', client_email: 'billing@techsoftware.io', amount: 13622, status: 'paid', due_date: '2026-10-01' },
-    { id: '2', client_name: 'Fashion & Apparel Studio', client_email: 'accounts@fashionstudio.co', amount: 9545, status: 'pending', due_date: '2026-10-20' },
-    { id: '3', client_name: 'Food & Beverage Group', client_email: 'treasury@fnbgroup.org', amount: 7064, status: 'paid', due_date: '2026-08-15' },
-    { id: '4', client_name: 'Wellness & Aesthetics', client_email: 'finance@wellnessgroup.com', amount: 8250, status: 'overdue', due_date: '2026-07-10' },
-    { id: '5', client_name: 'Cloud Infrastructure Ltd', client_email: 'ap@cloudinfra.net', amount: 15400, status: 'paid', due_date: '2026-10-12' },
+    {
+      id: '1',
+      client_name: 'Tech & Software Corp',
+      client_email: 'billing@techsoftware.io',
+      amount: 13622,
+      status: 'paid',
+      due_date: '2026-10-01',
+    },
+    {
+      id: '2',
+      client_name: 'Fashion & Apparel Studio',
+      client_email: 'accounts@fashionstudio.co',
+      amount: 9545,
+      status: 'pending',
+      due_date: '2026-10-20',
+    },
+    {
+      id: '3',
+      client_name: 'Food & Beverage Group',
+      client_email: 'treasury@fnbgroup.org',
+      amount: 7064,
+      status: 'paid',
+      due_date: '2026-08-15',
+    },
+    {
+      id: '4',
+      client_name: 'Wellness & Aesthetics',
+      client_email: 'finance@wellnessgroup.com',
+      amount: 8250,
+      status: 'overdue',
+      due_date: '2026-07-10',
+    },
+    {
+      id: '5',
+      client_name: 'Cloud Infrastructure Ltd',
+      client_email: 'ap@cloudinfra.net',
+      amount: 15400,
+      status: 'paid',
+      due_date: '2026-10-12',
+    },
   ]
 
-  const activeData = previewMode && invoices.length === 0 ? sampleInvoices : invoices
+  const activeData =
+    previewMode && invoices.length === 0 ? sampleInvoices : invoices
 
   // Aggregate Clients from Invoices Data
   const clientsList = useMemo(() => {
-    const map: Record<string, {
-      name: string
-      email: string
-      totalBilled: number
-      paidBilled: number
-      pendingBilled: number
-      invoiceCount: number
-      status: string
-      lastActive: string
-    }> = {}
+    const map: Record<
+      string,
+      {
+        name: string
+        email: string
+        totalBilled: number
+        paidBilled: number
+        pendingBilled: number
+        invoiceCount: number
+        status: string
+        lastActive: string
+      }
+    > = {}
 
     activeData.forEach((inv) => {
       const name = inv.client_name || 'Unnamed Entity'
-      const email = inv.client_email || `${name.toLowerCase().replace(/[^a-z0-9]/g, '')}@enterprise.io`
+      const email =
+        inv.client_email ||
+        `${name.toLowerCase().replace(/[^a-z0-9]/g, '')}@enterprise.io`
       const amt = Number(inv.amount || 0)
       const st = (inv.status || 'pending').toLowerCase()
 
@@ -89,7 +132,7 @@ export default function ClientsView({ invoices: initialInvoices }: ClientsViewPr
           pendingBilled: 0,
           invoiceCount: 0,
           status: 'Active',
-          lastActive: inv.due_date || '2026-10-10'
+          lastActive: inv.due_date || '2026-10-10',
         }
       }
 
@@ -103,9 +146,10 @@ export default function ClientsView({ invoices: initialInvoices }: ClientsViewPr
       }
     })
 
-    return Object.values(map).filter((c) =>
-      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.email.toLowerCase().includes(searchQuery.toLowerCase())
+    return Object.values(map).filter(
+      (c) =>
+        c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.email.toLowerCase().includes(searchQuery.toLowerCase())
     )
   }, [activeData, searchQuery])
 
@@ -115,20 +159,27 @@ export default function ClientsView({ invoices: initialInvoices }: ClientsViewPr
     setSubmitting(true)
     setErrorMsg(null)
 
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
     const payload: any = {
       client_name: clientName,
       client_email: clientEmail,
-      amount: initialAmount ? parseFloat(initialAmount) : 1000.00,
+      amount: initialAmount ? parseFloat(initialAmount) : 1000.0,
       status: 'pending',
-      due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      description: `Client Onboarding Retainer - ${clientCompany || clientName}`
+      due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split('T')[0],
+      description: `Client Onboarding Retainer - ${clientCompany || clientName}`,
     }
 
     if (user?.id) payload.user_id = user.id
 
-    const { data, error } = await supabase.from('invoices').insert([payload]).select()
+    const { data, error } = await supabase
+      .from('invoices')
+      .insert([payload])
+      .select()
 
     if (error) {
       setErrorMsg(error.message)
@@ -153,14 +204,15 @@ export default function ClientsView({ invoices: initialInvoices }: ClientsViewPr
   if (loading) {
     return (
       <div className="py-24 text-[#16140F] flex items-center justify-center font-mono text-sm">
-        <p className="animate-pulse">Loading client directory & relationship ledger…</p>
+        <p className="animate-pulse">
+          Loading client directory & relationship ledger…
+        </p>
       </div>
     )
   }
 
   return (
     <div className="space-y-8 animate-fadeIn antialiased selection:bg-[#2A23FF] selection:text-[#F3EFE6]">
-      
       {/* Top Header Eyebrow & Actions */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -171,10 +223,15 @@ export default function ClientsView({ invoices: initialInvoices }: ClientsViewPr
             </span>
           </div>
           <h1 className="text-[2.5rem] md:text-[3rem] font-[800] leading-[1.0] tracking-tight text-[#16140F]">
-            Active <span className="font-serif italic font-normal text-[#2A23FF]">clients</span>.
+            Active{' '}
+            <span className="font-serif italic font-normal text-[#2A23FF]">
+              clients
+            </span>
+            .
           </h1>
           <p className="text-[16px] text-[#4A463C] mt-2 leading-[1.55]">
-            Verified corporate accounts, cumulative billing volume, and direct settlement statuses.
+            Verified corporate accounts, cumulative billing volume, and direct
+            settlement statuses.
           </p>
         </div>
 
@@ -207,43 +264,67 @@ export default function ClientsView({ invoices: initialInvoices }: ClientsViewPr
       {/* Summary KPI Cards Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         <div className="bg-[#F3EFE6] border border-[#16140F]/15 p-5 rounded-[18px] shadow-[0_10px_30px_rgba(22,20,15,0.03)]">
-          <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-[#4A463C] font-semibold">Total Active Entities</p>
+          <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-[#4A463C] font-semibold">
+            Total Active Entities
+          </p>
           <div className="flex items-baseline space-x-2 mt-2">
             <span className="text-[2.25rem] font-[800] tracking-tight text-[#16140F] font-mono">
               {clientsList.length}
             </span>
-            <span className="font-serif italic text-[#2A23FF] text-sm">accounts</span>
+            <span className="font-serif italic text-[#2A23FF] text-sm">
+              accounts
+            </span>
           </div>
         </div>
 
         <div className="bg-[#F3EFE6] border border-[#16140F]/15 p-5 rounded-[18px] shadow-[0_10px_30px_rgba(22,20,15,0.03)]">
-          <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-[#4A463C] font-semibold">Cumulative Client Volume</p>
+          <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-[#4A463C] font-semibold">
+            Cumulative Client Volume
+          </p>
           <div className="flex items-baseline space-x-2 mt-2">
             <span className="text-[2.25rem] font-[800] tracking-tight text-[#16140F] font-mono">
-              ${clientsList.reduce((acc, c) => acc + c.totalBilled, 0).toLocaleString()}
+              $
+              {clientsList
+                .reduce((acc, c) => acc + c.totalBilled, 0)
+                .toLocaleString()}
             </span>
-            <span className="font-serif italic text-[#1FAE5A] text-sm">billed</span>
+            <span className="font-serif italic text-[#1FAE5A] text-sm">
+              billed
+            </span>
           </div>
         </div>
 
         <div className="bg-[#F3EFE6] border border-[#16140F]/15 p-5 rounded-[18px] shadow-[0_10px_30px_rgba(22,20,15,0.03)]">
-          <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-[#4A463C] font-semibold">Average Account Value</p>
+          <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-[#4A463C] font-semibold">
+            Average Account Value
+          </p>
           <div className="flex items-baseline space-x-2 mt-2">
             <span className="text-[2.25rem] font-[800] tracking-tight text-[#16140F] font-mono">
-              ${clientsList.length > 0 ? Math.round(clientsList.reduce((acc, c) => acc + c.totalBilled, 0) / clientsList.length).toLocaleString() : '0'}
+              $
+              {clientsList.length > 0
+                ? Math.round(
+                    clientsList.reduce((acc, c) => acc + c.totalBilled, 0) /
+                      clientsList.length
+                  ).toLocaleString()
+                : '0'}
             </span>
-            <span className="font-serif italic text-[#4A463C] text-sm">per client</span>
+            <span className="font-serif italic text-[#4A463C] text-sm">
+              per client
+            </span>
           </div>
         </div>
       </div>
 
       {/* Main Client Directory Card & Search Bar */}
       <div className="bg-[#F3EFE6] border border-[#16140F]/15 rounded-[18px] p-6 md:p-8 shadow-[0_10px_30px_rgba(22,20,15,0.03)] space-y-6">
-        
         <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 border-b border-[#16140F]/10 pb-5">
           <div>
-            <h2 className="text-xl font-[800] text-[#16140F] tracking-tight">Verified Entity Directory</h2>
-            <p className="text-xs text-[#4A463C] mt-0.5">Aggregated directly from your Supabase invoice ledger.</p>
+            <h2 className="text-xl font-[800] text-[#16140F] tracking-tight">
+              Verified Entity Directory
+            </h2>
+            <p className="text-xs text-[#4A463C] mt-0.5">
+              Aggregated directly from your Supabase invoice ledger.
+            </p>
           </div>
 
           <div className="relative min-w-[260px]">
@@ -275,7 +356,9 @@ export default function ClientsView({ invoices: initialInvoices }: ClientsViewPr
                       <h3 className="font-[800] text-base text-[#16140F] group-hover:text-[#2A23FF] transition-colors">
                         {client.name}
                       </h3>
-                      <p className="font-mono text-xs text-[#4A463C]">{client.email}</p>
+                      <p className="font-mono text-xs text-[#4A463C]">
+                        {client.email}
+                      </p>
                     </div>
                   </div>
 
@@ -292,16 +375,28 @@ export default function ClientsView({ invoices: initialInvoices }: ClientsViewPr
 
                 <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#16140F]/10 font-mono text-xs">
                   <div>
-                    <span className="text-[#4A463C] block text-[10px] uppercase">Invoices</span>
-                    <span className="font-bold text-[#16140F]">{client.invoiceCount} Record(s)</span>
+                    <span className="text-[#4A463C] block text-[10px] uppercase">
+                      Invoices
+                    </span>
+                    <span className="font-bold text-[#16140F]">
+                      {client.invoiceCount} Record(s)
+                    </span>
                   </div>
                   <div>
-                    <span className="text-[#4A463C] block text-[10px] uppercase">Settled</span>
-                    <span className="font-bold text-[#1FAE5A]">${client.paidBilled.toLocaleString()}</span>
+                    <span className="text-[#4A463C] block text-[10px] uppercase">
+                      Settled
+                    </span>
+                    <span className="font-bold text-[#1FAE5A]">
+                      ${client.paidBilled.toLocaleString()}
+                    </span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[#4A463C] block text-[10px] uppercase">Total Billed</span>
-                    <span className="font-bold text-[#16140F]">${client.totalBilled.toLocaleString()}</span>
+                    <span className="text-[#4A463C] block text-[10px] uppercase">
+                      Total Billed
+                    </span>
+                    <span className="font-bold text-[#16140F]">
+                      ${client.totalBilled.toLocaleString()}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -309,13 +404,15 @@ export default function ClientsView({ invoices: initialInvoices }: ClientsViewPr
           </div>
         ) : (
           <div className="text-center py-16 border border-dashed border-[#16140F]/20 rounded-[14px] bg-[#E9E3D4]/20 space-y-3">
-            <p className="text-sm font-semibold text-[#16140F]">No client accounts found.</p>
+            <p className="text-sm font-semibold text-[#16140F]">
+              No client accounts found.
+            </p>
             <p className="text-xs text-[#4A463C] max-w-md mx-auto">
-              Register a new client or click &ldquo;Load Sample Clients&rdquo; above to populate the directory.
+              Register a new client or click &ldquo;Load Sample Clients&rdquo;
+              above to populate the directory.
             </p>
           </div>
         )}
-
       </div>
 
       {/* ========================================================= */}
@@ -330,7 +427,11 @@ export default function ClientsView({ invoices: initialInvoices }: ClientsViewPr
                   Directory Addition
                 </span>
                 <h3 className="text-2xl font-[800] text-[#16140F] tracking-tight mt-0.5">
-                  Register <span className="font-serif italic font-normal text-[#2A23FF]">client</span>.
+                  Register{' '}
+                  <span className="font-serif italic font-normal text-[#2A23FF]">
+                    client
+                  </span>
+                  .
                 </h3>
               </div>
               <button
@@ -438,8 +539,12 @@ export default function ClientsView({ invoices: initialInvoices }: ClientsViewPr
                   {selectedClient.name.charAt(0)}
                 </div>
                 <div>
-                  <h3 className="text-xl font-[800] text-[#16140F]">{selectedClient.name}</h3>
-                  <p className="font-mono text-xs text-[#4A463C]">{selectedClient.email}</p>
+                  <h3 className="text-xl font-[800] text-[#16140F]">
+                    {selectedClient.name}
+                  </h3>
+                  <p className="font-mono text-xs text-[#4A463C]">
+                    {selectedClient.email}
+                  </p>
                 </div>
               </div>
               <button
@@ -453,19 +558,35 @@ export default function ClientsView({ invoices: initialInvoices }: ClientsViewPr
 
             <div className="grid grid-cols-2 gap-4 bg-[#E9E3D4]/40 p-4 rounded-xl font-mono text-xs">
               <div>
-                <span className="text-[#4A463C] block uppercase text-[10px]">Total Billed</span>
-                <span className="text-base font-bold text-[#16140F]">${selectedClient.totalBilled.toLocaleString()}</span>
+                <span className="text-[#4A463C] block uppercase text-[10px]">
+                  Total Billed
+                </span>
+                <span className="text-base font-bold text-[#16140F]">
+                  ${selectedClient.totalBilled.toLocaleString()}
+                </span>
               </div>
               <div>
-                <span className="text-[#4A463C] block uppercase text-[10px]">Settled Revenue</span>
-                <span className="text-base font-bold text-[#1FAE5A]">${selectedClient.paidBilled.toLocaleString()}</span>
+                <span className="text-[#4A463C] block uppercase text-[10px]">
+                  Settled Revenue
+                </span>
+                <span className="text-base font-bold text-[#1FAE5A]">
+                  ${selectedClient.paidBilled.toLocaleString()}
+                </span>
               </div>
             </div>
 
             <div className="space-y-2">
-              <p className="font-mono text-[10.5px] uppercase text-[#4A463C] font-semibold">Account Standing</p>
+              <p className="font-mono text-[10.5px] uppercase text-[#4A463C] font-semibold">
+                Account Standing
+              </p>
               <p className="text-xs text-[#16140F] leading-relaxed">
-                Entity has completed {selectedClient.invoiceCount} invoice cycle(s) under secure Supabase RLS encryption. Account status is verified as <strong className="text-[#1FAE5A]">{selectedClient.status}</strong>.
+                Entity has completed {selectedClient.invoiceCount} invoice
+                cycle(s) under secure Supabase RLS encryption. Account status is
+                verified as{' '}
+                <strong className="text-[#1FAE5A]">
+                  {selectedClient.status}
+                </strong>
+                .
               </p>
             </div>
 
@@ -481,7 +602,6 @@ export default function ClientsView({ invoices: initialInvoices }: ClientsViewPr
           </div>
         </div>
       )}
-
     </div>
   )
 }

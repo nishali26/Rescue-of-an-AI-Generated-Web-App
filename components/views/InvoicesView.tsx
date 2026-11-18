@@ -7,11 +7,15 @@ interface InvoicesViewProps {
   invoices?: any[]
 }
 
-export default function InvoicesView({ invoices: initialInvoices }: InvoicesViewProps) {
+export default function InvoicesView({
+  invoices: initialInvoices,
+}: InvoicesViewProps) {
   const [invoices, setInvoices] = useState<any[]>(initialInvoices || [])
   const [loading, setLoading] = useState(!initialInvoices)
   const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'ALL' | 'paid' | 'pending' | 'overdue'>('ALL')
+  const [statusFilter, setStatusFilter] = useState<
+    'ALL' | 'paid' | 'pending' | 'overdue'
+  >('ALL')
   const [previewMode, setPreviewMode] = useState(false)
 
   // Modals state
@@ -25,8 +29,12 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
   const [clientEmail, setClientEmail] = useState('')
   const [amount, setAmount] = useState('')
   const [dueDate, setDueDate] = useState('')
-  const [status, setStatus] = useState<'pending' | 'paid' | 'overdue'>('pending')
-  const [serviceDesc, setServiceDesc] = useState('Enterprise Cloud & DevOps Retainer')
+  const [status, setStatus] = useState<'pending' | 'paid' | 'overdue'>(
+    'pending'
+  )
+  const [serviceDesc, setServiceDesc] = useState(
+    'Enterprise Cloud & DevOps Retainer'
+  )
 
   const supabase = createClient()
 
@@ -63,7 +71,7 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
       status: 'paid',
       due_date: '2026-10-01',
       created_at: '2026-09-15T10:30:00Z',
-      description: 'Core Infrastructure & Security Audit Q3'
+      description: 'Core Infrastructure & Security Audit Q3',
     },
     {
       id: 'inv-9042-b7c1',
@@ -73,7 +81,7 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
       status: 'pending',
       due_date: '2026-10-28',
       created_at: '2026-10-02T14:20:00Z',
-      description: 'E-Commerce Checkout & Payment Gateway Integration'
+      description: 'E-Commerce Checkout & Payment Gateway Integration',
     },
     {
       id: 'inv-9043-c3d9',
@@ -83,7 +91,7 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
       status: 'overdue',
       due_date: '2026-09-10',
       created_at: '2026-08-20T09:15:00Z',
-      description: 'Custom Patient Portal & RLS Database Setup'
+      description: 'Custom Patient Portal & RLS Database Setup',
     },
     {
       id: 'inv-9044-d5e4',
@@ -93,7 +101,7 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
       status: 'paid',
       due_date: '2026-10-12',
       created_at: '2026-09-28T16:45:00Z',
-      description: 'Multi-Region Kubernetes Cluster Migration'
+      description: 'Multi-Region Kubernetes Cluster Migration',
     },
     {
       id: 'inv-9045-e1f8',
@@ -103,11 +111,12 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
       status: 'pending',
       due_date: '2026-11-05',
       created_at: '2026-10-10T11:00:00Z',
-      description: 'Supply Chain Analytics Dashboard Retainer'
-    }
+      description: 'Supply Chain Analytics Dashboard Retainer',
+    },
   ]
 
-  const activeData = previewMode && invoices.length === 0 ? sampleInvoices : invoices
+  const activeData =
+    previewMode && invoices.length === 0 ? sampleInvoices : invoices
 
   // Create New Invoice in Supabase
   const handleCreateInvoice = async (e: React.FormEvent) => {
@@ -115,7 +124,9 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
     setSubmitting(true)
     setErrorMsg(null)
 
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
     const payload: any = {
       client_name: clientName,
@@ -166,7 +177,9 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
 
     // Optimistic UI update
     setInvoices((prev) =>
-      prev.map((item) => (item.id === inv.id ? { ...item, status: nextStatus } : item))
+      prev.map((item) =>
+        item.id === inv.id ? { ...item, status: nextStatus } : item
+      )
     )
 
     if (selectedInvoice?.id === inv.id) {
@@ -207,8 +220,12 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
       const st = (inv.status || 'pending').toLowerCase()
       const matchesStatus = statusFilter === 'ALL' || st === statusFilter
       const matchesSearch =
-        (inv.client_name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-        String(inv.id || '').toLowerCase().includes(searchQuery.toLowerCase())
+        (inv.client_name || '')
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        String(inv.id || '')
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase())
       return matchesStatus && matchesSearch
     })
 
@@ -219,14 +236,16 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
         paidTotal,
         pendingTotal,
         overdueTotal,
-      }
+      },
     }
   }, [activeData, statusFilter, searchQuery])
 
   // Helper to format Invoice Code like #INV-9041
   const formatInvoiceCode = (id: any, index: number) => {
     if (!id) return `INV-${1040 + index}`
-    const clean = String(id).replace(/[^a-zA-Z0-9]/g, '').toUpperCase()
+    const clean = String(id)
+      .replace(/[^a-zA-Z0-9]/g, '')
+      .toUpperCase()
     return `INV-${clean.slice(0, 6)}`
   }
 
@@ -240,7 +259,6 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
 
   return (
     <div className="space-y-8 animate-fadeIn antialiased selection:bg-[#2A23FF] selection:text-[#F3EFE6]">
-      
       {/* Top Section Header & Primary Actions */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -251,10 +269,15 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
             </span>
           </div>
           <h1 className="text-[2.5rem] md:text-[3rem] font-[800] leading-[1.0] tracking-tight text-[#16140F]">
-            Enterprise <span className="font-serif italic font-normal text-[#2A23FF]">invoices</span>.
+            Enterprise{' '}
+            <span className="font-serif italic font-normal text-[#2A23FF]">
+              invoices
+            </span>
+            .
           </h1>
           <p className="text-[16px] text-[#4A463C] mt-2 leading-[1.55]">
-            Issue tamper-proof digital invoices, track settlement cycles, and audit client ledgers.
+            Issue tamper-proof digital invoices, track settlement cycles, and
+            audit client ledgers.
           </p>
         </div>
 
@@ -287,52 +310,66 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
       {/* 4 Bento Summary Strip Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <div className="bg-[#F3EFE6] border border-[#16140F]/15 p-5 rounded-[18px] shadow-[0_10px_30px_rgba(22,20,15,0.03)]">
-          <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-[#4A463C] font-semibold">Total Billed Ledger</p>
+          <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-[#4A463C] font-semibold">
+            Total Billed Ledger
+          </p>
           <div className="flex items-baseline space-x-2 mt-2">
             <span className="text-[2rem] font-[800] tracking-tight text-[#16140F] font-mono">
               ${summary.totalVolume.toLocaleString()}
             </span>
-            <span className="font-serif italic text-[#2A23FF] text-sm">gross</span>
+            <span className="font-serif italic text-[#2A23FF] text-sm">
+              gross
+            </span>
           </div>
         </div>
 
         <div className="bg-[#F3EFE6] border border-[#16140F]/15 p-5 rounded-[18px] shadow-[0_10px_30px_rgba(22,20,15,0.03)]">
-          <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-[#4A463C] font-semibold">Settled & Cleared</p>
+          <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-[#4A463C] font-semibold">
+            Settled & Cleared
+          </p>
           <div className="flex items-baseline space-x-2 mt-2">
             <span className="text-[2rem] font-[800] tracking-tight text-[#1FAE5A] font-mono">
               ${summary.paidTotal.toLocaleString()}
             </span>
-            <span className="font-serif italic text-[#1FAE5A] text-sm">paid</span>
+            <span className="font-serif italic text-[#1FAE5A] text-sm">
+              paid
+            </span>
           </div>
         </div>
 
         <div className="bg-[#F3EFE6] border border-[#16140F]/15 p-5 rounded-[18px] shadow-[0_10px_30px_rgba(22,20,15,0.03)]">
-          <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-[#4A463C] font-semibold">Awaiting Settlement</p>
+          <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-[#4A463C] font-semibold">
+            Awaiting Settlement
+          </p>
           <div className="flex items-baseline space-x-2 mt-2">
             <span className="text-[2rem] font-[800] tracking-tight text-[#16140F] font-mono">
               ${summary.pendingTotal.toLocaleString()}
             </span>
-            <span className="font-serif italic text-[#4A463C] text-sm">pending</span>
+            <span className="font-serif italic text-[#4A463C] text-sm">
+              pending
+            </span>
           </div>
         </div>
 
         <div className="bg-[#F3EFE6] border border-[#16140F]/15 p-5 rounded-[18px] shadow-[0_10px_30px_rgba(22,20,15,0.03)]">
-          <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-[#4A463C] font-semibold">Past Due / Action Req</p>
+          <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-[#4A463C] font-semibold">
+            Past Due / Action Req
+          </p>
           <div className="flex items-baseline space-x-2 mt-2">
             <span className="text-[2rem] font-[800] tracking-tight text-[#FF4D2E] font-mono">
               ${summary.overdueTotal.toLocaleString()}
             </span>
-            <span className="font-serif italic text-[#FF4D2E] text-sm">overdue</span>
+            <span className="font-serif italic text-[#FF4D2E] text-sm">
+              overdue
+            </span>
           </div>
         </div>
       </div>
 
       {/* Main Enterprise Invoice Register Card */}
       <div className="bg-[#F3EFE6] border border-[#16140F]/15 rounded-[18px] p-6 md:p-8 shadow-[0_10px_30px_rgba(22,20,15,0.03)] space-y-6">
-        
         {/* Filter Bar & Search Input */}
         <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 border-b border-[#16140F]/10 pb-5">
-          
           {/* Status Filter Tabs */}
           <div className="flex items-center space-x-1.5 bg-[#E9E3D4]/60 p-1 rounded-xl border border-[#16140F]/10 w-fit">
             {[
@@ -389,7 +426,9 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
                   <th className="py-3.5 px-4">Due Date</th>
                   <th className="py-3.5 px-4">Amount (USD)</th>
                   <th className="py-3.5 px-4">Settlement Status</th>
-                  <th className="py-3.5 px-4 text-right rounded-r-lg">Actions</th>
+                  <th className="py-3.5 px-4 text-right rounded-r-lg">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#16140F]/10 text-sm">
@@ -412,7 +451,9 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
 
                       {/* Client Name & Subtitle */}
                       <td className="py-4 px-4">
-                        <div className="font-semibold text-[#16140F]">{inv.client_name}</div>
+                        <div className="font-semibold text-[#16140F]">
+                          {inv.client_name}
+                        </div>
                         <div className="font-mono text-[10.5px] text-[#4A463C]">
                           {inv.description || 'Standard Enterprise Billing'}
                         </div>
@@ -430,7 +471,10 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
 
                       {/* Amount */}
                       <td className="py-4 px-4 font-mono text-sm font-bold text-[#16140F]">
-                        ${Number(inv.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        $
+                        {Number(inv.amount || 0).toLocaleString('en-US', {
+                          minimumFractionDigits: 2,
+                        })}
                       </td>
 
                       {/* Status Badge */}
@@ -440,8 +484,8 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
                             st === 'paid'
                               ? 'bg-[#1FAE5A]/15 text-[#1FAE5A] border border-[#1FAE5A]/30'
                               : st === 'overdue'
-                              ? 'bg-[#FF4D2E]/15 text-[#FF4D2E] border border-[#FF4D2E]/30'
-                              : 'bg-[#16140F]/10 text-[#16140F] border border-[#16140F]/20'
+                                ? 'bg-[#FF4D2E]/15 text-[#FF4D2E] border border-[#FF4D2E]/30'
+                                : 'bg-[#16140F]/10 text-[#16140F] border border-[#16140F]/20'
                           }`}
                         >
                           <span
@@ -449,8 +493,8 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
                               st === 'paid'
                                 ? 'bg-[#1FAE5A]'
                                 : st === 'overdue'
-                                ? 'bg-[#FF4D2E]'
-                                : 'bg-[#16140F]'
+                                  ? 'bg-[#FF4D2E]'
+                                  : 'bg-[#16140F]'
                             }`}
                           />
                           <span>{st}</span>
@@ -462,7 +506,13 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
                         <div className="flex items-center justify-end space-x-2">
                           <button
                             type="button"
-                            onClick={() => setSelectedInvoice({ ...inv, code: invCode, issueDate })}
+                            onClick={() =>
+                              setSelectedInvoice({
+                                ...inv,
+                                code: invCode,
+                                issueDate,
+                              })
+                            }
                             className="font-mono text-[10.5px] uppercase px-2.5 py-1 rounded-lg bg-[#E9E3D4] hover:bg-[#16140F] hover:text-[#F3EFE6] text-[#16140F] border border-[#16140F]/10 transition-all cursor-pointer font-semibold"
                           >
                             View Doc
@@ -498,9 +548,13 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
           </div>
         ) : (
           <div className="text-center py-16 border border-dashed border-[#16140F]/20 rounded-[14px] bg-[#E9E3D4]/20 space-y-3">
-            <p className="text-sm font-semibold text-[#16140F]">No matching invoice records in ledger.</p>
+            <p className="text-sm font-semibold text-[#16140F]">
+              No matching invoice records in ledger.
+            </p>
             <p className="text-xs text-[#4A463C] max-w-md mx-auto">
-              Issue your first live invoice to store it securely in Supabase, or click &ldquo;Load Sample Invoices&rdquo; above to preview the enterprise document system.
+              Issue your first live invoice to store it securely in Supabase, or
+              click &ldquo;Load Sample Invoices&rdquo; above to preview the
+              enterprise document system.
             </p>
             <div className="pt-2">
               <button
@@ -516,8 +570,13 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
 
         {/* Footer Audit Metadata */}
         <div className="pt-4 border-t border-[#16140F]/10 flex flex-col sm:flex-row justify-between items-center text-[11px] font-mono text-[#4A463C] gap-2">
-          <span>Showing {filteredInvoices.length} of {activeData.length} registered ledger entries</span>
-          <span className="text-[#16140F] font-semibold">RLS Tenant Verification: Active</span>
+          <span>
+            Showing {filteredInvoices.length} of {activeData.length} registered
+            ledger entries
+          </span>
+          <span className="text-[#16140F] font-semibold">
+            RLS Tenant Verification: Active
+          </span>
         </div>
       </div>
 
@@ -533,7 +592,11 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
                   New Ledger Entry
                 </span>
                 <h3 className="text-2xl font-[800] text-[#16140F] tracking-tight mt-0.5">
-                  Issue <span className="font-serif italic font-normal text-[#2A23FF]">invoice</span>.
+                  Issue{' '}
+                  <span className="font-serif italic font-normal text-[#2A23FF]">
+                    invoice
+                  </span>
+                  .
                 </h3>
               </div>
               <button
@@ -652,7 +715,6 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
       {selectedInvoice && (
         <div className="fixed inset-0 z-50 bg-[#16140F]/65 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-[#F3EFE6] border border-[#16140F]/25 rounded-[22px] max-w-2xl w-full p-8 md:p-10 shadow-2xl space-y-8 my-8 animate-fadeIn">
-            
             {/* Document Top Header */}
             <div className="flex justify-between items-start border-b border-[#16140F]/15 pb-6">
               <div className="space-y-2">
@@ -661,7 +723,10 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
                     IG
                   </div>
                   <span className="font-[800] text-lg tracking-tight text-[#16140F]">
-                    Invoice<span className="font-serif italic font-normal text-[#2A23FF]">Guard</span>
+                    Invoice
+                    <span className="font-serif italic font-normal text-[#2A23FF]">
+                      Guard
+                    </span>
                   </span>
                 </div>
                 <p className="font-mono text-[10px] uppercase tracking-wider text-[#4A463C]">
@@ -670,8 +735,12 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
               </div>
 
               <div className="text-right space-y-1">
-                <span className="font-mono text-xs uppercase text-[#4A463C]">Invoice Reference</span>
-                <p className="font-mono text-xl font-bold text-[#2A23FF]">#{selectedInvoice.code}</p>
+                <span className="font-mono text-xs uppercase text-[#4A463C]">
+                  Invoice Reference
+                </span>
+                <p className="font-mono text-xl font-bold text-[#2A23FF]">
+                  #{selectedInvoice.code}
+                </p>
                 <span
                   className={`inline-block px-2.5 py-0.5 rounded-full font-mono text-[10px] uppercase font-semibold ${
                     selectedInvoice.status === 'paid'
@@ -687,24 +756,41 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
             {/* Billed To & Dates Metadata */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 bg-[#E9E3D4]/45 p-5 rounded-2xl border border-[#16140F]/10">
               <div className="space-y-1">
-                <p className="font-mono text-[10px] uppercase text-[#4A463C] font-semibold">Billed To Client</p>
-                <p className="text-base font-[800] text-[#16140F]">{selectedInvoice.client_name}</p>
+                <p className="font-mono text-[10px] uppercase text-[#4A463C] font-semibold">
+                  Billed To Client
+                </p>
+                <p className="text-base font-[800] text-[#16140F]">
+                  {selectedInvoice.client_name}
+                </p>
                 <p className="font-mono text-xs text-[#4A463C]">
-                  {selectedInvoice.client_email || 'accounts@client-enterprise.io'}
+                  {selectedInvoice.client_email ||
+                    'accounts@client-enterprise.io'}
                 </p>
               </div>
               <div className="sm:text-right space-y-1 font-mono text-xs">
                 <div>
-                  <span className="text-[#4A463C] uppercase text-[10px]">Issue Date: </span>
-                  <span className="text-[#16140F] font-semibold">{selectedInvoice.issueDate}</span>
+                  <span className="text-[#4A463C] uppercase text-[10px]">
+                    Issue Date:{' '}
+                  </span>
+                  <span className="text-[#16140F] font-semibold">
+                    {selectedInvoice.issueDate}
+                  </span>
                 </div>
                 <div>
-                  <span className="text-[#4A463C] uppercase text-[10px]">Due Date: </span>
-                  <span className="text-[#16140F] font-semibold">{selectedInvoice.due_date}</span>
+                  <span className="text-[#4A463C] uppercase text-[10px]">
+                    Due Date:{' '}
+                  </span>
+                  <span className="text-[#16140F] font-semibold">
+                    {selectedInvoice.due_date}
+                  </span>
                 </div>
                 <div>
-                  <span className="text-[#4A463C] uppercase text-[10px]">Security: </span>
-                  <span className="text-[#1FAE5A] font-semibold">RLS Signed</span>
+                  <span className="text-[#4A463C] uppercase text-[10px]">
+                    Security:{' '}
+                  </span>
+                  <span className="text-[#1FAE5A] font-semibold">
+                    RLS Signed
+                  </span>
                 </div>
               </div>
             </div>
@@ -720,15 +806,21 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
               <div className="grid grid-cols-12 items-center py-3 border-b border-[#16140F]/10 text-sm">
                 <div className="col-span-8">
                   <p className="font-semibold text-[#16140F]">
-                    {selectedInvoice.description || 'Enterprise SaaS Infrastructure & Consulting'}
+                    {selectedInvoice.description ||
+                      'Enterprise SaaS Infrastructure & Consulting'}
                   </p>
                   <p className="font-mono text-[11px] text-[#4A463C] mt-0.5">
                     Standard Service Level Agreement (SLA) · Direct Settlement
                   </p>
                 </div>
-                <div className="col-span-2 text-center font-mono text-xs text-[#4A463C]">01</div>
+                <div className="col-span-2 text-center font-mono text-xs text-[#4A463C]">
+                  01
+                </div>
                 <div className="col-span-2 text-right font-mono font-bold text-[#16140F]">
-                  ${Number(selectedInvoice.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  $
+                  {Number(selectedInvoice.amount || 0).toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                  })}
                 </div>
               </div>
             </div>
@@ -736,14 +828,21 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
             {/* Total Calculation Footer */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 pt-2">
               <div className="font-mono text-[10.5px] text-[#4A463C] space-y-1 max-w-xs">
-                <p className="uppercase font-semibold text-[#16140F]">Payment Instructions</p>
-                <p>Wire transfer or ACH via registered InvoiceGuard settlement account.</p>
+                <p className="uppercase font-semibold text-[#16140F]">
+                  Payment Instructions
+                </p>
+                <p>
+                  Wire transfer or ACH via registered InvoiceGuard settlement
+                  account.
+                </p>
               </div>
 
               <div className="w-full sm:w-64 space-y-2 font-mono text-xs bg-[#16140F] text-[#F3EFE6] p-5 rounded-2xl">
                 <div className="flex justify-between text-[#F3EFE6]/60">
                   <span>Subtotal</span>
-                  <span>${Number(selectedInvoice.amount || 0).toLocaleString()}</span>
+                  <span>
+                    ${Number(selectedInvoice.amount || 0).toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex justify-between text-[#F3EFE6]/60">
                   <span>Tax (0%)</span>
@@ -752,7 +851,11 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
                 <div className="border-t border-[#F3EFE6]/15 pt-2 flex justify-between text-sm font-bold text-[#F3EFE6]">
                   <span>Total Due</span>
                   <span className="text-[#1FAE5A]">
-                    ${Number(selectedInvoice.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    $
+                    {Number(selectedInvoice.amount || 0).toLocaleString(
+                      'en-US',
+                      { minimumFractionDigits: 2 }
+                    )}
                   </span>
                 </div>
               </div>
@@ -776,11 +879,9 @@ export default function InvoicesView({ invoices: initialInvoices }: InvoicesView
                 Close Document
               </button>
             </div>
-
           </div>
         </div>
       )}
-
     </div>
   )
 }

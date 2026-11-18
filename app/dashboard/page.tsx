@@ -16,17 +16,28 @@ export default function DashboardPage() {
   const [user, setUser] = useState<any>(null)
   const [invoices, setInvoices] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  
+
   // Fixed: Added 'security' to activeTab type definition
-  const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'invoices' | 'clients' | 'transactions' | 'security' | 'settings'>('overview')
+  const [activeTab, setActiveTab] = useState<
+    | 'overview'
+    | 'analytics'
+    | 'invoices'
+    | 'clients'
+    | 'transactions'
+    | 'security'
+    | 'settings'
+  >('overview')
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  
+
   const router = useRouter()
   const supabase = createClient()
 
   useEffect(() => {
     async function loadData() {
-      const { data: { user }, error } = await supabase.auth.getUser()
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser()
 
       // ==========================================
       // FIXED: Flaw 01 (Restored Authentication Check & Redirect)
@@ -60,7 +71,7 @@ export default function DashboardPage() {
     router.push('/login')
   }
 
-  // Agar loading true hai, toh secure workspace loading screen dikhayein 
+  // Agar loading true hai, toh secure workspace loading screen dikhayein
   // aur dashboard ka baaki content render hi na hone dein!
   if (loading) {
     return (
@@ -72,13 +83,11 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#F3EFE6] flex text-[#16140F] antialiased selection:bg-[#2A23FF] selection:text-[#F3EFE6]">
-      
       {/* 1. Permanent Static Sidebar with Tab Handler */}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* 2. Right Side Main Content Pane */}
       <main className="flex-1 p-6 md:p-10 space-y-8 overflow-y-auto">
-        
         {/* Top Header Navbar */}
         <header className="w-full bg-[#F3EFE6]/90 backdrop-blur-md border border-[#16140F]/15 rounded-[18px] p-4 shadow-[0_10px_30px_rgba(22,20,15,0.04)] flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -86,8 +95,12 @@ export default function DashboardPage() {
               IG
             </div>
             <div>
-              <h2 className="font-[800] text-[#16140F] text-sm tracking-tight">Enterprise Workspace</h2>
-              <span className="font-mono text-[10px] uppercase tracking-wider text-[#2A23FF]">Active View: {activeTab}</span>
+              <h2 className="font-[800] text-[#16140F] text-sm tracking-tight">
+                Enterprise Workspace
+              </h2>
+              <span className="font-mono text-[10px] uppercase tracking-wider text-[#2A23FF]">
+                Active View: {activeTab}
+              </span>
             </div>
           </div>
 
@@ -110,11 +123,19 @@ export default function DashboardPage() {
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-56 bg-[#F3EFE6] border border-[#16140F]/15 rounded-xl shadow-2xl py-2 z-50">
                   <div className="px-4 py-2 border-b border-[#16140F]/10">
-                    <p className="font-mono text-[10px] text-[#4A463C]">Signed in as</p>
-                    <p className="text-xs font-semibold text-[#16140F] truncate">{user?.email}</p>
+                    <p className="font-mono text-[10px] text-[#4A463C]">
+                      Signed in as
+                    </p>
+                    <p className="text-xs font-semibold text-[#16140F] truncate">
+                      {user?.email}
+                    </p>
                   </div>
                   <div className="py-1">
-                    <button type="button" onClick={handleSignOut} className="w-full text-left px-4 py-2 text-xs font-semibold text-[#FF4D2E] hover:bg-[#FF4D2E]/10 flex items-center justify-between cursor-pointer">
+                    <button
+                      type="button"
+                      onClick={handleSignOut}
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#FF4D2E] hover:bg-[#FF4D2E]/10 flex items-center justify-between cursor-pointer"
+                    >
                       <span>Sign Out</span>
                       <span>→</span>
                     </button>
@@ -127,16 +148,18 @@ export default function DashboardPage() {
 
         {/* --- DYNAMIC VIEW RENDERING BASED ON ACTIVE TAB --- */}
 
-        {activeTab === 'overview' && <OverviewView invoices={invoices} user={user} />}
+        {activeTab === 'overview' && (
+          <OverviewView invoices={invoices} user={user} />
+        )}
         {activeTab === 'analytics' && <AnalyticsView invoices={invoices} />}
         {activeTab === 'invoices' && <InvoicesView invoices={invoices} />}
         {activeTab === 'clients' && <ClientsView invoices={invoices} />}
-        {activeTab === 'transactions' && <TransactionsView invoices={invoices} />}
+        {activeTab === 'transactions' && (
+          <TransactionsView invoices={invoices} />
+        )}
         {activeTab === 'security' && <SecurityView />}
         {activeTab === 'settings' && <SettingsView />}
-
       </main>
-
     </div>
   )
 }

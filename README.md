@@ -1,4 +1,5 @@
 # Rescue of an AI-Generated Web Application
+
 ### From a Flawed Prototype to a Secure, Reliable, and Production-Ready SaaS Application
 
 ![Project Status](https://img.shields.io/badge/Project-In%20Progress-orange)
@@ -71,6 +72,7 @@ The application will also provide a secure environment in which users can access
 ### Core Features
 
 #### User Authentication
+
 - User registration.
 - Secure login and logout.
 - Session management.
@@ -79,6 +81,7 @@ The application will also provide a secure environment in which users can access
 - Password reset functionality, if included in the final scope.
 
 #### Invoice Management
+
 - Create new invoices.
 - View invoice details.
 - Update existing invoices.
@@ -88,6 +91,7 @@ The application will also provide a secure environment in which users can access
 - Manage payment statuses.
 
 #### Dashboard
+
 - Display total invoices.
 - Show paid and unpaid invoices.
 - Display pending and overdue invoices.
@@ -95,12 +99,14 @@ The application will also provide a secure environment in which users can access
 - Allow users to access their invoice records.
 
 #### Search and Filtering
+
 - Search invoices.
 - Filter invoices by payment status.
 - Organize invoice records.
 - Display relevant information efficiently.
 
 #### User Experience
+
 - Responsive interface for desktop and mobile devices.
 - Loading indicators.
 - Empty-state messages.
@@ -114,19 +120,19 @@ The application will also provide a secure environment in which users can access
 
 The project uses modern web development technologies.
 
-| Technology | Purpose |
-|---|---|
-| Next.js | Application framework and frontend/backend development |
-| React | Building reusable user interface components |
-| TypeScript | Type safety and improved code reliability |
-| Tailwind CSS | Responsive styling and UI design |
-| Supabase | Backend services and authentication |
-| PostgreSQL | Relational database management |
-| Git | Version control |
-| GitHub | Source code management and collaboration |
-| Vercel | Application hosting and deployment |
-| Sentry | Error monitoring and logging |
-| Lighthouse | Performance and quality measurement |
+| Technology   | Purpose                                                |
+| ------------ | ------------------------------------------------------ |
+| Next.js      | Application framework and frontend/backend development |
+| React        | Building reusable user interface components            |
+| TypeScript   | Type safety and improved code reliability              |
+| Tailwind CSS | Responsive styling and UI design                       |
+| Supabase     | Backend services and authentication                    |
+| PostgreSQL   | Relational database management                         |
+| Git          | Version control                                        |
+| GitHub       | Source code management and collaboration               |
+| Vercel       | Application hosting and deployment                     |
+| Sentry       | Error monitoring and logging                           |
+| Lighthouse   | Performance and quality measurement                    |
 
 ### Technology Details
 
@@ -237,16 +243,16 @@ The initial application will provide basic invoice management functionality but 
 
 At least eight issues will be introduced or identified across the following categories:
 
-| Category | Example Issue |
-|---|---|
-| Authentication | Missing or incomplete authentication checks |
-| Security | Insecure handling of API keys or secrets |
-| Database Structure | Incorrect relationships or missing constraints |
-| Integrations | Missing handling for failed external requests |
-| Error Handling | Missing or unclear error messages |
+| Category              | Example Issue                                            |
+| --------------------- | -------------------------------------------------------- |
+| Authentication        | Missing or incomplete authentication checks              |
+| Security              | Insecure handling of API keys or secrets                 |
+| Database Structure    | Incorrect relationships or missing constraints           |
+| Integrations          | Missing handling for failed external requests            |
+| Error Handling        | Missing or unclear error messages                        |
 | Inconsistent Behavior | Duplicate form submissions or unreliable database writes |
-| Deployment | Incorrect environment configuration |
-| Performance | Unnecessary requests and inefficient rendering |
+| Deployment            | Incorrect environment configuration                      |
+| Performance           | Unnecessary requests and inefficient rendering           |
 
 The initial prototype will be kept separate from the final production version.
 
@@ -276,12 +282,12 @@ Each identified issue will include:
 
 ### Severity Classification
 
-| Severity | Description |
-|---|---|
+| Severity | Description                                                                             |
+| -------- | --------------------------------------------------------------------------------------- |
 | Critical | A serious vulnerability or failure that could cause major damage or unauthorized access |
-| High | A significant security or reliability problem |
-| Medium | A problem that affects functionality, performance, or maintainability |
-| Low | A minor issue with limited impact |
+| High     | A significant security or reliability problem                                           |
+| Medium   | A problem that affects functionality, performance, or maintainability                   |
+| Low      | A minor issue with limited impact                                                       |
 
 ### Example Audit Finding
 
@@ -296,6 +302,7 @@ Each identified issue will include:
 **Severity:** Critical or High, depending on the credential's permissions and exposure.
 
 **Proposed Solution:**
+
 - Move private credentials to environment variables.
 - Access secrets only through trusted server-side code.
 - Rotate any genuinely exposed credentials.
@@ -370,18 +377,18 @@ The database will be reviewed and improved to maintain data consistency.
 
 The invoice database may include:
 
-| Field | Description |
-|---|---|
-| id | Unique invoice identifier |
-| user_id | ID of the invoice owner |
-| customer_name | Customer's name |
-| invoice_number | Invoice reference number |
-| amount | Invoice amount |
-| status | Payment status |
-| issue_date | Invoice creation date |
-| due_date | Payment due date |
-| created_at | Record creation timestamp |
-| updated_at | Last update timestamp |
+| Field          | Description               |
+| -------------- | ------------------------- |
+| id             | Unique invoice identifier |
+| user_id        | ID of the invoice owner   |
+| customer_name  | Customer's name           |
+| invoice_number | Invoice reference number  |
+| amount         | Invoice amount            |
+| status         | Payment status            |
+| issue_date     | Invoice creation date     |
+| due_date       | Payment due date          |
+| created_at     | Record creation timestamp |
+| updated_at     | Last update timestamp     |
 
 Database improvements will include:
 
@@ -467,6 +474,7 @@ The application must be tested after implementing the fixes to verify that it wo
 ### Testing Areas
 
 **Authentication Testing**
+
 - Register a new user.
 - Log in with valid credentials.
 - Reject invalid login attempts.
@@ -474,6 +482,7 @@ The application must be tested after implementing the fixes to verify that it wo
 - Test logout and session handling.
 
 **Database Testing**
+
 - Create an invoice.
 - Read invoice records.
 - Update an invoice.
@@ -481,6 +490,7 @@ The application must be tested after implementing the fixes to verify that it wo
 - Verify data consistency.
 
 **Security Testing**
+
 - Verify that private credentials are not exposed.
 - Test access restrictions.
 - Verify RLS policies.
@@ -488,18 +498,21 @@ The application must be tested after implementing the fixes to verify that it wo
 - Check security-related HTTP headers.
 
 **Error Handling Testing**
+
 - Test failed database requests.
 - Test invalid form submissions.
 - Verify that useful error messages appear.
 - Verify that application errors are recorded in Sentry.
 
 **Performance Testing**
+
 - Run Lighthouse tests.
 - Review performance reports.
 - Identify unnecessary resource loading.
 - Compare initial and final measurements.
 
 **Responsive Testing**
+
 - Test desktop layouts.
 - Test tablet layouts.
 - Test mobile layouts.
@@ -554,29 +567,29 @@ A major part of this project is demonstrating measurable improvements.
 
 The initial application and the rescued application will be compared using code changes, testing results, and performance measurements.
 
-| Area | Initial Application | Improved Application |
-|---|---|---|
-| Authentication | Identified weaknesses | Validated authentication and sessions |
-| Security | Identified secret-handling risks | Secure environment configuration |
-| Database | Identified schema and access issues | Improved relationships and RLS |
-| Error Handling | Missing or inconsistent handling | Structured error handling |
-| Monitoring | Limited visibility into errors | Sentry integration |
-| Performance | Baseline measurement | Optimized application |
-| User Experience | Missing interface states | Loading, empty, error and success states |
-| Deployment | Identified configuration issues | Verified Vercel deployment |
+| Area            | Initial Application                 | Improved Application                     |
+| --------------- | ----------------------------------- | ---------------------------------------- |
+| Authentication  | Identified weaknesses               | Validated authentication and sessions    |
+| Security        | Identified secret-handling risks    | Secure environment configuration         |
+| Database        | Identified schema and access issues | Improved relationships and RLS           |
+| Error Handling  | Missing or inconsistent handling    | Structured error handling                |
+| Monitoring      | Limited visibility into errors      | Sentry integration                       |
+| Performance     | Baseline measurement                | Optimized application                    |
+| User Experience | Missing interface states            | Loading, empty, error and success states |
+| Deployment      | Identified configuration issues     | Verified Vercel deployment               |
 
 ### Metrics to Record
 
-| Metric | Initial Result | Final Result |
-|---|---|---|
-| Lighthouse Performance | To be measured | Target: 90+ |
-| Lighthouse Accessibility | To be measured | Record actual result |
-| Lighthouse Best Practices | To be measured | Record actual result |
-| Lighthouse SEO | To be measured | Record actual result |
-| Security Headers | To be inspected | Record verified result |
-| Authentication Tests | To be tested | Record pass/fail |
-| Cross-User Access Tests | To be tested | Record pass/fail |
-| Error Monitoring | To be tested | Verify Sentry events |
+| Metric                    | Initial Result  | Final Result           |
+| ------------------------- | --------------- | ---------------------- |
+| Lighthouse Performance    | To be measured  | Target: 90+            |
+| Lighthouse Accessibility  | To be measured  | Record actual result   |
+| Lighthouse Best Practices | To be measured  | Record actual result   |
+| Lighthouse SEO            | To be measured  | Record actual result   |
+| Security Headers          | To be inspected | Record verified result |
+| Authentication Tests      | To be tested    | Record pass/fail       |
+| Cross-User Access Tests   | To be tested    | Record pass/fail       |
+| Error Monitoring          | To be tested    | Verify Sentry events   |
 
 All results will be recorded from actual tests. No performance or security improvements will be claimed without evidence.
 
@@ -858,6 +871,7 @@ The objective is to build an application where security is part of the system de
 This project is designed to provide practical experience in several areas of software engineering.
 
 ### Full-Stack Development
+
 - Next.js.
 - React.
 - TypeScript.
@@ -866,6 +880,7 @@ This project is designed to provide practical experience in several areas of sof
 - Server-side programming.
 
 ### Database Development
+
 - PostgreSQL.
 - SQL.
 - Supabase.
@@ -874,6 +889,7 @@ This project is designed to provide practical experience in several areas of sof
 - Row-Level Security.
 
 ### Application Security
+
 - Authentication.
 - Authorization.
 - Session management.
@@ -882,6 +898,7 @@ This project is designed to provide practical experience in several areas of sof
 - Security auditing.
 
 ### Software Engineering
+
 - Code debugging.
 - Error handling.
 - Software testing.
@@ -890,6 +907,7 @@ This project is designed to provide practical experience in several areas of sof
 - Technical documentation.
 
 ### Deployment and Monitoring
+
 - Git and GitHub.
 - Vercel.
 - Production configuration.
@@ -953,22 +971,22 @@ It also highlights an important lesson in modern software development:
 
 ## Project Information
 
-| Field | Details |
-|---|---|
-| Project Name | Rescue of an AI-Generated Web Application |
-| Application | Invoice Tracker SaaS |
-| Project Type | Full-Stack Development and Application Security |
-| Duration | 2–3 Weeks |
-| Frontend | Next.js, React, TypeScript, Tailwind CSS |
-| Backend | Next.js Server-Side Logic, Supabase |
-| Database | PostgreSQL |
-| Authentication | Supabase Auth |
-| Security | RLS, Access Control, Secret Management |
-| Monitoring | Sentry |
-| Performance Testing | Lighthouse |
-| Version Control | Git and GitHub |
-| Deployment | Vercel |
-| Status | In Progress |
+| Field               | Details                                         |
+| ------------------- | ----------------------------------------------- |
+| Project Name        | Rescue of an AI-Generated Web Application       |
+| Application         | Invoice Tracker SaaS                            |
+| Project Type        | Full-Stack Development and Application Security |
+| Duration            | 2–3 Weeks                                       |
+| Frontend            | Next.js, React, TypeScript, Tailwind CSS        |
+| Backend             | Next.js Server-Side Logic, Supabase             |
+| Database            | PostgreSQL                                      |
+| Authentication      | Supabase Auth                                   |
+| Security            | RLS, Access Control, Secret Management          |
+| Monitoring          | Sentry                                          |
+| Performance Testing | Lighthouse                                      |
+| Version Control     | Git and GitHub                                  |
+| Deployment          | Vercel                                          |
+| Status              | In Progress                                     |
 
 **Developer:** Nisha Ali
 
