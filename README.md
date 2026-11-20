@@ -62,13 +62,15 @@
   <p><em>Production Lighthouse audit verifying top-tier performance (96), accessibility (95), best practices (100), and SEO (100).</em></p>
 </div>
 
+<div class="flex flex-row items-center gap-4">
 
-<img src="login.png" alt="InvoiceGuard Login Interface" width="20%" height="20%"/>
-<img src="dashboard.png" alt="InvoiceGuard Dashboard" width="20%" height="20%"/>
-<img src="finance.png" alt="InvoiceGuard Analytics" width="20%" height="20%"/>
- <img src="enterprise.png" alt="InvoiceGuard Invoices" width="20%" height="20%"/>
-<img src="trans.png" alt="InvoiceGuard Transactions" width="20%" height="20%"/>
-<img src="perform.png" alt="InvoiceGuard Lighthouse Scores" width="20%" height="20%"/>
+<img src="login.png" alt="InvoiceGuard Login Interface" width="20%" height="15%"/>
+<img src="dashboard.png" alt="InvoiceGuard Dashboard" width="30%" height="20%"/>
+<img src="finance.png" alt="InvoiceGuard Analytics" width="30%" height="20%"/>
+ <img src="enterprise.png" alt="InvoiceGuard Invoices" width="30%" height="20%"/>
+<img src="trans.png" alt="InvoiceGuard Transactions" width="30%" height="20%"/>
+<img src="perform.png" alt="InvoiceGuard Lighthouse Scores" width="30%" height="20%"/>
+</div>
 ---
 
 ## 🛠️ Technology Stack & Architecture
