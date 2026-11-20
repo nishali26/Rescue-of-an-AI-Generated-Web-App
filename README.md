@@ -28,40 +28,47 @@
 
 ### 1. Secure Authentication & Access Control
 <div align="center">
-  <img src="login.png" alt="InvoiceGuard Login Interface" width="85%"/>
+  
   <p><em>Secure Supabase Authentication Portal enforcing encrypted session management and route guards.</em></p>
 </div>
 
 ### 2. Live Executive Dashboard & PostgreSQL Integration
 <div align="center">
-  <img src="dashboard.png" alt="InvoiceGuard Dashboard" width="85%"/>
+  
   <p><em>Executive Dashboard displaying real-time database metrics, settled balances, and live ledger data.</em></p>
 </div>
 
 ### 3. Financial Analytics & Intelligence
 <div align="center">
-  <img src="finance.png" alt="InvoiceGuard Analytics" width="85%"/>
+  
   <p><em>Financial Metrics & Distribution graphs tracking monthly cashflow, collection velocity, and aging analysis.</em></p>
 </div>
 
 ### 4. Enterprise Invoices & Ledger Management
 <div align="center">
-  <img src="enterprise.png" alt="InvoiceGuard Invoices" width="85%"/>
+ 
   <p><em>Tamper-proof digital invoice tracking with dynamic status toggles (Paid/Pending/Overdue).</em></p>
 </div>
 
 ### 5. Secure Transactions & Ledger Auditing
 <div align="center">
-  <img src="trans.png" alt="InvoiceGuard Transactions" width="85%"/>
+  
   <p><em>Immutable records of incoming wire transfers, ACH gateways, and card settlements.</em></p>
 </div>
 
 ### 6. Performance Telemetry & Lighthouse Optimization
 <div align="center">
-  <img src="perform.png" alt="InvoiceGuard Lighthouse Scores" width="85%"/>
+  
   <p><em>Production Lighthouse audit verifying top-tier performance (96), accessibility (95), best practices (100), and SEO (100).</em></p>
 </div>
 
+
+<img src="login.png" alt="InvoiceGuard Login Interface" width="20%" height="20%"/>
+<img src="dashboard.png" alt="InvoiceGuard Dashboard" width="20%" height="20%"/>
+<img src="finance.png" alt="InvoiceGuard Analytics" width="20%" height="20%"/>
+ <img src="enterprise.png" alt="InvoiceGuard Invoices" width="20%" height="20%"/>
+<img src="trans.png" alt="InvoiceGuard Transactions" width="20%" height="20%"/>
+<img src="perform.png" alt="InvoiceGuard Lighthouse Scores" width="20%" height="20%"/>
 ---
 
 ## 🛠️ Technology Stack & Architecture
