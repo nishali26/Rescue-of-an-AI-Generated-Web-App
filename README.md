@@ -64,8 +64,8 @@
 
 <div class="flex flex-row items-center gap-4">
 
-<img src="login.png" alt="InvoiceGuard Login Interface" width="20%" height="10%"/>
-<img src="dashboard.png" alt="InvoiceGuard Dashboard" width="30%" height="25%"/>
+<img src="login.png" alt="InvoiceGuard Login Interface" width="10%" height="5%"/>
+<img src="dashboard.png" alt="InvoiceGuard Dashboard" width="30%" height="30%"/>
 <img src="finance.png" alt="InvoiceGuard Analytics" width="30%" height="20%"/>
  <img src="enterprise.png" alt="InvoiceGuard Invoices" width="30%" height="20%"/>
 <img src="trans.png" alt="InvoiceGuard Transactions" width="30%" height="20%"/>
